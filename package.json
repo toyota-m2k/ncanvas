@@ -1,0 +1,34 @@
+{
+  "name": "ncanvas",
+  "version": "1.0.0",
+  "description": "drawing canvas library",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "~1.18.2",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.15.5",
+    "morgan": "~1.9.0",
+    "serve-favicon": "~2.4.5"
+  },
+  "devDependencies": {
+    "cross-env": "^5.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/toyota-m2k/ncanvas.git"
+  },
+  "keywords": [
+    "canvas",
+    "javascript"
+  ],
+  "author": "M.TOYOTA",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/toyota-m2k/ncanvas/issues"
+  },
+  "homepage": "https://github.com/toyota-m2k/ncanvas#readme"
+}
