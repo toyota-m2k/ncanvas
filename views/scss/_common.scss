@@ -1,0 +1,240 @@
+@charset "utf-8";
+
+// global settings and mixins
+
+@mixin mch-font-family {
+    font-family: "Avenir", "Helvetica", "Arial", "Meiryo UI", "メイリオ", "Meiryo", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", sans-serif;
+}
+  
+@mixin mch-roboto-font-family {
+    font-family: "Roboto", "Avenir", "Helvetica", "Arial", "Meiryo UI", "メイリオ", "Meiryo", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", sans-serif;
+}
+
+@mixin align_content($align) {
+    align-content: $align;
+    -webkit-align-content: $align;
+}
+
+@mixin align_items($align) {
+    -webkit-align-items: $align;
+    -ms-flex-align: $align;
+    align-items: $align;
+}
+
+@mixin display_flex {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+@mixin flex_wrap($val) {
+    flex-wrap: $val;
+    -ms-flex-wrap: $val;
+    -webkit-flex-wrap: $val;
+}
+
+@mixin flex-justify-content($align) {
+    justify-content: $align;
+    -webkit-justify-content: $align;
+}
+
+@mixin square_border($color) {
+    border: solid 1px $color;
+}
+
+@mixin round_border($color, $radius) {
+    border: solid 1px $color;
+    -webkit-border-radius: $radius;
+    -moz-border-radius: $radius;
+    border-radius: $radius;
+}
+
+@mixin border_radius($radius) {
+    -webkit-border-radius: $radius;
+    -moz-border-radius: $radius;
+    border-radius: $radius;
+}
+
+@mixin round_no_border($color, $radius) {
+    -webkit-border-radius: $radius;
+    -moz-border-radius: $radius;
+    border-radius: $radius;
+}
+
+@mixin flex_direction($dir) {
+    -webkit-flex-direction: $dir;
+    -ms-flex-direction: $dir;
+    flex-direction: $dir;
+}
+
+@mixin flex_wrap($wrap) {
+    flex-wrap: $wrap;
+    -ms-flex-wrap: $wrap;
+    -webkit-flex-wrap: $wrap;
+}
+
+@mixin flex_grow($v) {
+    -webkit-flex-grow: $v;
+    -ms-flex-positive: $v;
+    flex-grow: $v;
+}
+
+@mixin box_sizing($sizing) {
+    -webkit-box-sizing: $sizing;
+    -moz-box-sizing: $sizing;
+    box-sizing: $sizing;
+}
+
+@mixin transition_duration($v) {
+    -webkit-transition-duration: $v;
+    -moz-transition-duration: $v;
+    -ms-transition-duration: $v;
+    -o-transition-duration: $v;
+    transition-duration: $v;
+}
+
+@mixin transition_timing_function($fn) {
+    -webkit-transition-timing-function: $fn;
+    -moz-transition-timing-function: $fn;
+    -ms-transition-timing-function: $fn;
+    -o-transition-timing-function: $fn;
+    transition-timing-function: $fn;
+}
+
+@mixin transition_property($v) {
+    -webkit-transition-property: $v;
+    -moz-transition-property: $v;
+    -ms-transition-property: $v;
+    -o-transition-property: $v;
+    transition-property: $v;
+}
+
+@mixin transition($prop, $time) {
+    -webkit-transition: $prop $time;
+    -moz-transition: $prop $time;
+    -ms-transition: $prop $time;
+    -o-transition: $prop $time;
+    transition: $prop $time;
+}
+
+@mixin transition3($prop, $time, $fn) {
+    -webkit-transition: $prop $time $fn;
+    -moz-transition: $prop $time $fn;
+    -ms-transition: $prop $time $fn;
+    -o-transition: $prop $time $fn;
+    transition: $prop $time $fn;
+}
+
+@mixin transform($v) {
+    -webkit-transform: $v;
+    -moz-transform: $v;
+    -ms-transform: $v;
+    -o-transform: $v;
+    transform: $v;
+}
+
+@mixin transform_origin($v) {
+    -webkit-transform-origin: $v;
+    -moz-transform-origin: $v;
+    -ms-transform-origin: $v;
+    -o-transform-origin: $v;
+    transform-origin: $v;
+}
+
+@mixin transition_bg_color {
+    @include transition_duration(0.28s);
+    @include transition_timing_function(cubic-bezier(0.4, 0, 0.2, 1));
+    @include transition_property(background-color);
+}
+
+@mixin transition_bg_color_slow {
+    @include transition_duration(0.5s);
+    @include transition_timing_function(cubic-bezier(0.4, 0, 0.2, 1));
+    @include transition_property(background-color);
+}
+
+@mixin transition_min_height {
+    @include transition(min-height, 1s);
+    @include transition_timing_function(cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+@mixin transition_fade {
+    @include transition(opacity, 0.5s);
+    @include transition_timing_function(cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+@mixin transition_all {
+    @include transition(all, 0.5s);
+    @include transition_timing_function(cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+@mixin filter($v) {
+    filter: $v;
+    -ms-filter: $v;
+    -webkit-filter: $v;
+    -moz-filter: $v;
+    -o-filter: $v;
+}
+
+/* Rules for sizing the icon. */
+.material-icons.md-14 { font-size: 14px; }
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-36 { font-size: 36px; }
+.material-icons.md-48 { font-size: 48px; }
+
+// left spacing
+.sl-8 {
+    margin-left: 8px;
+}
+.sl-16 {
+    margin-left: 16px;
+}
+// right spacing
+.sr-8 {
+    margin-right: 8px;
+}
+.sr-16 {
+    margin-right: 16px;
+}
+// top spacing
+.st-8 {
+    margin-top: 8px;
+}
+.st-16 {
+    margin-top: 16px;
+}
+.sb-8 {
+    margin-bottom: 8px;
+}
+.sb-16 {
+    margin-bottom: 16px;
+}
+
+.center-text {
+    text-align: center;
+}
+
+.hidden {
+    display: none;
+}
+
+.transparent {
+    opacity: 0;
+}
+
+.pre-formatted {
+    white-space: pre;
+}
+
+.flip-h {
+    @include transform(scaleX(-1));
+}
+.flip-v {
+    @include transform(scaleY(-1));
+}
+
+.blur {
+    @include filter(blur(2px));
+}
+    

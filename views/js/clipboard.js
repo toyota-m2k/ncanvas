@@ -1,6 +1,5 @@
 /**
  * mmjClipboard.js
- *
  * Created by toyota on 2016/12/15.
  */
 
@@ -93,7 +92,7 @@
         }
     }
     
-    $.mmjClipboard = new Clipboard();
-    $.mmjClipboard.enable();
+    window.mch = window.mch || {};
+    window.mch.clipboard = new Clipboard;
     
 })(jQuery);

@@ -1,4 +1,5 @@
 /**
+ * demo.js
  * Created by toyota on 2016/11/22.
  */
 'use strict';
@@ -26,7 +27,7 @@
     }
 
     var vueRoot = new Vue({
-        mixins: [mmjVueMdlMixin],           // update_mdl();
+        mixins: [window.mch.vueMdlMixin],           // update_mdl();
         el: '#vueRoot',
         data: {
             images: [],
@@ -36,20 +37,21 @@
         },
         ready: function() {
             var self = this;
-            $.mmjClipboard.register('drawpad', {
+            window.mch.clipboard.enable();
+            window.mch.clipboard.register('drawpad', {
                 paste: function(event) {
-                    if($.mmjClipboard.getImageData(event, function(image) {
+                    if(window.mch.clipboard.getImageData(event, function(image) {
                             self.$refs['drawpad'].paste('image', image);
                         })) {
                         return true;
                     }
-                    var text = $.mmjClipboard.getTextData(event, 'text/plain');
+                    var text = window.mch.clipboard.getTextData(event, 'text/plain');
                     if(text) {
                         self.$refs['drawpad'].paste('text', text);
                         return true;
                     }
                     
-                    text = $.mmjClipboard.getTextData(event, 'text/x-mmj-draw');
+                    text = window.mch.clipboard.getTextData(event, 'text/x-mch-draw');
                     if(text) {
                         self.$refs['drawpad'].paste('stroke', text);
                         return true;
@@ -59,16 +61,16 @@
                 
                 copy: function() {
                     var d = self.$refs['drawpad'].copy();
-                    return d ? {type:'text/x-mmj-draw', value:d} : null;
+                    return d ? {type:'text/x-mch-draw', value:d} : null;
                 },
                 cut: function(complete) {
                     var d = self.$refs['drawpad'].cut();
-                    return d ? {type:'text/x-mmj-draw', value:d} : null;
+                    return d ? {type:'text/x-mch-draw', value:d} : null;
                 }
             });
         },
         beforeDestroy: function() {
-            $.mmjClipboard.unregister('drawpad');
+            window.mch.clipboard.unregister('drawpad');
         },
         methods: {
             snapshot: function() {

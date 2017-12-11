@@ -1,0 +1,212 @@
+@charset "UTF-8";
+/**
+ * Copyright 2015 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* ==========  Color Palettes  ========== */
+/* colors.scss */
+/* Rules for sizing the icon. */
+.material-icons.md-14 {
+  font-size: 14px; }
+
+.material-icons.md-18 {
+  font-size: 18px; }
+
+.material-icons.md-24 {
+  font-size: 24px; }
+
+.material-icons.md-36 {
+  font-size: 36px; }
+
+.material-icons.md-48 {
+  font-size: 48px; }
+
+.sl-8 {
+  margin-left: 8px; }
+
+.sl-16 {
+  margin-left: 16px; }
+
+.sr-8 {
+  margin-right: 8px; }
+
+.sr-16 {
+  margin-right: 16px; }
+
+.st-8 {
+  margin-top: 8px; }
+
+.st-16 {
+  margin-top: 16px; }
+
+.sb-8 {
+  margin-bottom: 8px; }
+
+.sb-16 {
+  margin-bottom: 16px; }
+
+.center-text {
+  text-align: center; }
+
+.hidden {
+  display: none; }
+
+.transparent {
+  opacity: 0; }
+
+.pre-formatted {
+  white-space: pre; }
+
+.flip-h {
+  -webkit-transform: scaleX(-1);
+  -moz-transform: scaleX(-1);
+  -ms-transform: scaleX(-1);
+  -o-transform: scaleX(-1);
+  transform: scaleX(-1); }
+
+.flip-v {
+  -webkit-transform: scaleY(-1);
+  -moz-transform: scaleY(-1);
+  -ms-transform: scaleY(-1);
+  -o-transform: scaleY(-1);
+  transform: scaleY(-1); }
+
+.blur {
+  filter: blur(2px);
+  -ms-filter: blur(2px);
+  -webkit-filter: blur(2px);
+  -moz-filter: blur(2px);
+  -o-filter: blur(2px); }
+
+div.anim-tools {
+  margin: 0 16px; }
+  div.anim-tools div.mdl-textfield {
+    width: 100px;
+    margin-right: 8px; }
+  div.anim-tools button {
+    margin-right: 8px; }
+
+.drawpad {
+  color: #757575; }
+  .drawpad div.canvas-box {
+    position: relative;
+    border: solid 1px lightgray;
+    margin: auto;
+    width: 640px;
+    height: 480px; }
+    .drawpad div.canvas-box canvas {
+      position: absolute;
+      top: 0;
+      left: 0; }
+    .drawpad div.canvas-box .text-box {
+      position: absolute;
+      width: 100px;
+      top: 100px;
+      left: 100px;
+      display: none;
+      font-size: 14px;
+      line-height: 1.2em;
+      font-family: "Avenir", "Helvetica", "Arial", "Meiryo UI", "メイリオ", "Meiryo", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", sans-serif; }
+  .drawpad .drawpad-toolbar {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    padding: 4px 0; }
+    .drawpad .drawpad-toolbar button {
+      margin: 0 4px; }
+    .drawpad .drawpad-toolbar button.on {
+      background-color: "63,81,181";
+      color: white; }
+    .drawpad .drawpad-toolbar .pen-size-box {
+      max-width: 300px; }
+    .drawpad .drawpad-toolbar .spacer-16 {
+      margin-left: 16px; }
+    .drawpad .drawpad-toolbar .spacer {
+      -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+      flex-grow: 1; }
+    .drawpad .drawpad-toolbar .option-box {
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-align-items: center;
+      -ms-flex-align: center;
+      align-items: center;
+      margin-left: 24px; }
+    .drawpad .drawpad-toolbar .pen-sample-box {
+      padding: 2px;
+      width: 50px;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      border: solid 1px lightgray;
+      -webkit-border-radius: 2px;
+      -moz-border-radius: 2px;
+      border-radius: 2px; }
+      .drawpad .drawpad-toolbar .pen-sample-box .pen-sample-outer {
+        width: 28px;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex; }
+      .drawpad .drawpad-toolbar .pen-sample-box .pen-sample {
+        margin: auto; }
+  .drawpad .rubber-bands {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: visible;
+    display: none; }
+    .drawpad .rubber-bands .rb-content {
+      position: absolute;
+      cursor: move;
+      box-sizing: border-box;
+      border: solid 1px "63,81,181"; }
+    .drawpad .rubber-bands .rb-t, .drawpad .rubber-bands .rb-b {
+      position: absolute;
+      height: 15px;
+      margin-top: -7px;
+      cursor: n-resize;
+      box-sizing: border-box; }
+    .drawpad .rubber-bands .rb-l, .drawpad .rubber-bands .rb-r {
+      position: absolute;
+      width: 15px;
+      margin-left: -7px;
+      cursor: e-resize;
+      box-sizing: border-box; }
+    .drawpad .rubber-bands .knob {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      margin-left: -7px;
+      margin-top: -7px;
+      border: solid 1px gray;
+      background-color: "63,81,181";
+      box-sizing: border-box; }
+    .drawpad .rubber-bands .knob-l,
+    .drawpad .rubber-bands .knob-r {
+      cursor: e-resize; }
+    .drawpad .rubber-bands .knob-t,
+    .drawpad .rubber-bands .knob-b {
+      cursor: n-resize; }
+    .drawpad .rubber-bands .knob-rt,
+    .drawpad .rubber-bands .knob-lb {
+      cursor: ne-resize; }
+    .drawpad .rubber-bands .knob-lt,
+    .drawpad .rubber-bands .knob-rb {
+      cursor: nw-resize; }
+
+/*# sourceMappingURL=demo.css.map */

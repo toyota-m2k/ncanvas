@@ -1,6 +1,6 @@
 /**
+ * drawpad.js
  * Created by toyota on 2016/11/22.
- * 
  * Copyright 2016 M.TOYOTA
  * All rights reserved.
  */
@@ -14,7 +14,7 @@
     };
 
     Vue.component('drawpad', {
-        mixins: [mmjVueMdlMixin],           // update_mdl();
+        mixins: [mch.vueMdlMixin],           // update_mdl();
         el: function () {
             return '.drawpad';
         },
@@ -47,7 +47,7 @@
         ready: function() {
             var self = this;
             var $el = $(this.$el);
-            this.sketchpad = new $.Sketchpad({
+            this.drawpad = new mch.nCanvas({
                 element: $el.find('.canvas-box'),
                 layerCount: 2,
                 initialLayer: 1,
@@ -75,13 +75,13 @@
                     }
                 }
             });
-            //this.sketchpad.color=this.color;
+            //this.drawpad.color=this.color;
 
             // $(this.$el).find('input[type=color]').on('change', function(){
             //    //console.log(this);
-            //     self.penStyle.backgroundColor=self.sketchpad.color=this.value;
+            //     self.penStyle.backgroundColor=self.drawpad.color=this.value;
             // });
-            $(this.$el).mmjDropTarget({
+            $(this.$el).mchDropTarget({
                 dropped: function(files) {
                     self.setBgImage(files);
                 }
@@ -91,11 +91,11 @@
 
         methods: {
             undo: function() {
-                this.sketchpad.undo();
+                this.drawpad.undo();
             },
             
             redo: function() {
-                this.sketchpad.redo();
+                this.drawpad.redo();
             },
 
             updatePenSampleColor: function(v) {
@@ -121,7 +121,7 @@
 
                     var self = this;
                     reader.onload = function () {
-                        self.sketchpad.addImage(reader.result, layer);
+                        self.drawpad.addImage(reader.result, layer);
                     };
                     reader.readAsDataURL(file);
                 }
@@ -132,21 +132,21 @@
             },
 
             deleteItems: function() {
-                this.sketchpad.deleteSelectedObjects();
+                this.drawpad.deleteSelectedObjects();
             },
 
             reselect: function() {
                 if(this.state == 'selecting') {
-                    this.sketchpad.completeSelection();
+                    this.drawpad.completeSelection();
                 } else {
-                    this.sketchpad.restartSelection(true);
+                    this.drawpad.restartSelection(true);
                 }
             },
             deselect: function() {
                 if(this.state == 'deselecting') {
-                    this.sketchpad.completeSelection();
+                    this.drawpad.completeSelection();
                 } else {
-                    this.sketchpad.restartSelection(false);
+                    this.drawpad.restartSelection(false);
                 }
             },
             /**
@@ -162,28 +162,28 @@
 
             penSizeChanged: function() {
                 if(this.state=='selected' && this.selectTypes.stroke) {
-                    this.sketchpad.applyPenSizeToSelection(true);
+                    this.drawpad.applyPenSizeToSelection(true);
                 }
             },
 
             toImage: function(completed, layers) {
-                this.sketchpad.toImage(completed, layers);
+                this.drawpad.toImage(completed, layers);
             },
             snapshot: function(completed, layers) {
-                this.sketchpad.toCanvas(completed, layers);
+                this.drawpad.toCanvas(completed, layers);
             },
             paste: function(type, data, layer) {
-                this.sketchpad.paste(type, data, layer);
+                this.drawpad.paste(type, data, layer);
             },
             
             copy: function() {
-                return this.sketchpad.getSelectionAsJson();
+                return this.drawpad.getSelectionAsJson();
             },
             
             cut: function() {
                 var r = this.copy();
                 if(r) {
-                    this.sketchpad.deleteSelectedObjects();
+                    this.drawpad.deleteSelectedObjects();
                 }
                 return r;
             }
@@ -191,9 +191,9 @@
         
         watch: {
             'penSize': function(v) {
-                this.sketchpad.penSize = v;
+                this.drawpad.penSize = v;
                 if(this.state=='selected' && this.selectTypes.stroke) {
-                    this.sketchpad.applyPenSizeToSelection(false);
+                    this.drawpad.applyPenSizeToSelection(false);
                 }
 
                 if(v<4) {
@@ -203,14 +203,14 @@
                 this.penStyle.borderRadius = v/2+'px';
             },
             'color': function(v) {
-                this.sketchpad.color = v;
+                this.drawpad.color = v;
                 if(this.state=='selected' && (this.selectTypes.stroke||this.selectTypes.text)) {
-                    this.sketchpad.applyColorToSelection(true);
+                    this.drawpad.applyColorToSelection(true);
                 }
                 this.updatePenSampleColor(v);
             },
             'mode': function(v) {
-                this.sketchpad.setMode((v=='image')?'draw':v);
+                this.drawpad.setMode((v=='image')?'draw':v);
                 if(v=='erase') {
                     this.updatePenSampleColor('#ffffff');
                 } else {
@@ -220,13 +220,13 @@
             'layer' : function(v) {
                 switch(v) {
                     case 'bg':
-                        this.sketchpad.activateLayer([1,0], 0);
+                        this.drawpad.activateLayer([1,0], 0);
                         break;
                     case 'fg':
-                        this.sketchpad.activateLayer([0,1], 1);
+                        this.drawpad.activateLayer([0,1], 1);
                         break;
                     default:
-                        this.sketchpad.activateLayer([1,1], 1);
+                        this.drawpad.activateLayer([1,1], 1);
                         break;
                 }
             }

@@ -1,38 +1,22 @@
-//  mmjSketchpad.js
+//  nCanvas.js
 //
-//    Copyright (C) 2016  M.TOYOTA  All rights reserved.
-//
-//    sketchpad.js (https://github.com/yiom/sketchpad : MIT License)をベースに
-//    若干手を加える程度のつもりだったが、
-//    ・消しゴムを追加
-//    ・レイヤーを追加
-//    ・画像を貼る機能を追加
-//    ・メソッド名、プロパティ名を適切なものに変更
-//    ・undoの管理を完全に書き直し
-//    ・ラバーバンドによる選択・リサイズを追加
-//    ・マウス・タッチイベントのハンドリングを書き直し
-//    ・animate/toObject/toJSON メソッドは削除
-//    と、このあたりまできたら、もう原型をとどめないので、コピーライト表記は不要だと思っていたが、さらに、
-//    ・レイヤーを選択して画像化
-//    ・テキストボックス
-//    ・ストローク/テキストボックスの属性（色/サイズ）変更
-//    などを追加するに至り、完全にオリジナルな実装となったので、自分のコピーライトを入れることにする。
+//    Copyright (C) 2016-2017  M.TOYOTA  All rights reserved.
 //
 
 (function($) {
 
   // 外部参照
-  var RubberBand = $.mmjrb.RubberBand;
-  var Rect = $.mmjrb.Rect;
-  var Point = $.mmjrb.Point;
-  var Transformer = $.mmjrb.Transformer;
+  var RubberBand = window.mch.rb.RubberBand;
+  var Rect = window.mch.rb.Rect;
+  var Point = window.mch.rb.Point;
+  var Transformer = window.mch.rb.Transformer;
   var TEXTBOX_INIT_WIDTH = 200;
   var TEXTBOX_INIT_HEIGHT = 24;
   var TEXTBOX_MAX_WIDTH = 300;
   var TEXTBOX_MAX_HEIGHT = 250;
 
   /**
-   * Sketchpadクラス
+   * nCanvasクラス
    * @param config
    *          element: キャンバスのコンテナ(div)
    *          layerCount: レイヤー数
@@ -50,15 +34,15 @@
    *
    * @constructor
    */
-  function Sketchpad(config) {
-    // Enforces the context for all functions
+  function nCanvas(config) {
+    // thisポインタを固定
     for (var key in this.constructor.prototype) {
       this[key] = this[key].bind(this);
     }
 
-    // Warn the user if no DOM element was selected
+    // キャンバスをホストするDOMエレメントの指定は必須。
     if (!config.hasOwnProperty('element')) {
-      console.error('SKETCHPAD ERROR: No element selected');
+      console.error('nCanvas error: No element selected');
       return;
     }
 
@@ -72,7 +56,7 @@
     this.layers = [];
     this._activeLayers = [];
     for (var i = 0; i < layerCount; i++) {
-      var c = $('<canvas class="mmj-sk-canvas">');
+      var c = $('<canvas class="ncanvas-canvas">');
       this.root.append(c);
       this.layers.push({element: c});
       this._activeLayers.push(true);
@@ -88,7 +72,7 @@
       $(this.eventTarget).css({cursor: 'crosshair'});
     }
 
-    this.elText = $('<textarea class="mmj-text-unit">');
+    this.elText = $('<textarea class="text-unit">');
     this.root.append(this.elText);
 
     this.rb = new RubberBand(this.root);
@@ -107,7 +91,7 @@
     this.currentLayer = config.initialLayer || 0;
     this.on = config.on || {};
 
-    // ReadOnly sketchpads may not be modified
+    // ReadOnly nCanvass may not be modified
 
     // Stroke control variables
     this.drawables = config.drawables || [];
@@ -157,9 +141,9 @@
   }
 
   /**
-   * Sketchpad用に追加されたDOM要素を削除する
+   * nCanvas用に追加されたDOM要素を削除する
    */
-  Sketchpad.prototype.destroy = function() {
+  nCanvas.prototype.destroy = function() {
     this.root.empty();
 
     // これ以降の操作をエラーにするため、主要なメンバーをクリアしておく
@@ -178,7 +162,7 @@
    *
    * @private
    */
-  Sketchpad.prototype._initCanvas = function () {
+  nCanvas.prototype._initCanvas = function () {
     // Set attributes
     for(var i=0 ; i<this.layers.length ; i++) {
       var layer = this.layers[i];
@@ -212,7 +196,7 @@
    * @returns {{x: number, y: number}}　マウス/タップ座標
    * @private
    */
-  Sketchpad.prototype._cursorPosition = function (event) {
+  nCanvas.prototype._cursorPosition = function (event) {
     if (event.type === 'touchstart'||event.type=='touchmove') {
       event = event.changedTouches[0];
     }
@@ -235,7 +219,7 @@
    * @param obj         描画オブジェクト
    * @private
    */
-  Sketchpad.prototype._drawStrokesWithLine = function (layerInfo, obj) {
+  nCanvas.prototype._drawStrokesWithLine = function (layerInfo, obj) {
     if(!obj.points.length) {
       return;
     }
@@ -282,7 +266,7 @@
    * @param obj         描画オブジェクト
    * @private
    */
-  Sketchpad.prototype._drawStrokes = function (layerInfo, obj) {
+  nCanvas.prototype._drawStrokes = function (layerInfo, obj) {
     if(!obj.points.length) {
       return;
     }
@@ -332,7 +316,7 @@
    * @param transformer   位置・サイズ補正用オブジェクト（nullなら補正なし）
    * @private
    */
-  Sketchpad.prototype._drawLine = function (layerInfo, start, end, color, size, erase, transformer) {
+  nCanvas.prototype._drawLine = function (layerInfo, start, end, color, size, erase, transformer) {
     var compositeOperation = erase ? 'destination-out' : 'source-over';
     var sx = start.x, sy=start.y, ex=end.x, ey=end.y;
     if(transformer) {
@@ -362,7 +346,7 @@
    * @param his   履歴オブジェクト
    * @private
      */
-  Sketchpad.prototype._addHistory = function(his) {
+  nCanvas.prototype._addHistory = function(his) {
     if (this.curHistory < this.undoHistory.length) {
       // redo 情報が残っていれば削除する
       this.undoHistory.splice(this.curHistory);
@@ -388,7 +372,7 @@
    * @returns {number}  追加されたオブジェクトのインデックス
    * @private
      */
-  Sketchpad.prototype._addObject = function (obj) {
+  nCanvas.prototype._addObject = function (obj) {
     this.drawables.push(obj);
 
     this._addHistory({
@@ -404,7 +388,7 @@
    * @param newObj
    * @private
    */
-  Sketchpad.prototype._replaceObject = function (orgObj, newObj) {
+  nCanvas.prototype._replaceObject = function (orgObj, newObj) {
     orgObj.alive = false;
     var i = this.drawables.indexOf(orgObj);
     this.drawables.splice(i, 0, newObj);
@@ -425,7 +409,7 @@
    * @returns {{width: number, lineMargin: number, lineHeight: *, height: number, lines: Array}}
    * @private
    */
-  Sketchpad.prototype._measureText = function(text, font) {
+  nCanvas.prototype._measureText = function(text, font) {
     if(!this.txMeasure) {
       this.txMeasure = $('<div>Hg</div>');
       var con = $('<div style="width:0;height:0;overflow:hidden">');
@@ -462,7 +446,7 @@
    * @return 見つかったテキストボックス（描画オブジェクト）、なければnull
    * @private
    */
-  Sketchpad.prototype._hitTestTextBox = function (pos) {
+  nCanvas.prototype._hitTestTextBox = function (pos) {
     for(var i=this.drawables.length-1 ; i>=0 ; i--) {
       var e = this.drawables[i];
       if (e.alive && this._activeLayers[e.layer] && e.type=='text') {
@@ -480,7 +464,7 @@
    * @returns {boolean}
    * @private
    */
-  Sketchpad.prototype._isEditingText = function () {
+  nCanvas.prototype._isEditingText = function () {
     return this.elText.css('display')!='none';
   };
 
@@ -491,7 +475,7 @@
    * @param pos   クリック位置
    * @private
    */
-  Sketchpad.prototype._beginEditText = function (obj, pos) {
+  nCanvas.prototype._beginEditText = function (obj, pos) {
     this.editingText = obj;
 
     var x,y,w,h, text;
@@ -519,7 +503,7 @@
     this.elText[0].focus();
   };
 
-  Sketchpad.prototype._updateText = function (obj, text) {
+  nCanvas.prototype._updateText = function (obj, text) {
     if(obj.text != text) {
       // 文字列が変更された
       var layer = obj.layer;
@@ -546,7 +530,7 @@
     }
   };
 
-  Sketchpad.prototype.addText = function (text, layer, pos) {
+  nCanvas.prototype.addText = function (text, layer, pos) {
     layer = (null!=layer) ? layer : this.currentLayer;
     if(text.length>0) {
       if(this._mode=='select' || this._state=='selected') {
@@ -585,7 +569,7 @@
    * テキスト編集を終了する
    * @private
    */
-  Sketchpad.prototype._endEditText = function () {
+  nCanvas.prototype._endEditText = function () {
     var text = this.elText.val();
     var obj = null;
     if(this.editingText) {
@@ -606,7 +590,7 @@
    * @param event イベントオブジェクト
    * @private
    */
-  Sketchpad.prototype._mouseDown = function (event) {
+  nCanvas.prototype._mouseDown = function (event) {
     event.preventDefault();
     if (this._sketching) {
       return;
@@ -670,7 +654,7 @@
    * @param event イベントオブジェクト
    * @private
    */
-  Sketchpad.prototype._mouseMove = function (event) {
+  nCanvas.prototype._mouseMove = function (event) {
     var currentPosition = this._cursorPosition(event);
     if(currentPosition.x==this._lastPosition.x && currentPosition.y==this._lastPosition.y) {
       return;
@@ -691,7 +675,7 @@
    *
    * @private
    */
-  Sketchpad.prototype._mouseUp = function (/*event*/) {
+  nCanvas.prototype._mouseUp = function (/*event*/) {
     if (this._sketching) {
       this._sketching = false;
       if (this._mode != 'select') {
@@ -730,7 +714,7 @@
    * @param event イベント情報
    * @private
    */
-  Sketchpad.prototype._beginSelect = function (p, event) {
+  nCanvas.prototype._beginSelect = function (p, event) {
     // this._clear();
     // this.redraw();
     if(this._state == 'selected' && !event.ctrlKey ) {
@@ -804,7 +788,7 @@
    * @param p2    現在のマウス/タッチ位置
    * @private
    */
-  Sketchpad.prototype._updateSelect = function (p1, p2) {
+  nCanvas.prototype._updateSelect = function (p1, p2) {
     if(this._state!='') {
       return;
     }
@@ -828,7 +812,7 @@
    *
    * @private
    */
-  Sketchpad.prototype._endSelect = function () {
+  nCanvas.prototype._endSelect = function () {
     if(this._state=='') {
       this.completeSelection();
     }
@@ -837,7 +821,7 @@
   /**
    * ラバーバンドを表示して、移動/リサイズ操作を開始
    */
-  Sketchpad.prototype.completeSelection = function() {
+  nCanvas.prototype.completeSelection = function() {
     if(!this._selection.objects.length) {
       return;
     }
@@ -880,7 +864,7 @@
    * 選択が完了し移動・リサイズ操作が開始された（ラバーバンドが表示された）状態から、もう一度、選択操作を開始する。
    * この後は、mouseupイベントでは選択操作から抜けないので、明示的に completeSelection()を呼び出す必要がある。
    */
-  Sketchpad.prototype.restartSelection = function(select) {
+  nCanvas.prototype.restartSelection = function(select) {
     if(this._state == 'selected') {
       this.rb.hide();
       this._state = select ? 'selecting' : 'deselecting';
@@ -893,7 +877,7 @@
   /**
    * ラバーバンドを消して、移動/リサイズ操作を終了
    */
-  Sketchpad.prototype.resetSelection = function() {
+  nCanvas.prototype.resetSelection = function() {
     this._state = '';
     if(this._selection) {
       this._selection.objects.forEach(function(e) {
@@ -918,7 +902,7 @@
    * @param rb  ラバーバンド
    * @private
    */
-  Sketchpad.prototype._onRubberBandMoving = function(rb) {
+  nCanvas.prototype._onRubberBandMoving = function(rb) {
     this._transformer.set(this._selection.moveFrom, rb.rect);
     this._selection.objects.forEach(function(obj){
       this._moveObject(obj, this._transformer);
@@ -932,7 +916,7 @@
    * @param rb
    * @private
    */
-  Sketchpad.prototype._onRubberBandMoved = function(rb) {
+  nCanvas.prototype._onRubberBandMoved = function(rb) {
     this._onRubberBandMoving(rb);
 
     var history = [];
@@ -962,7 +946,7 @@
    *
    * @private
      */
-  Sketchpad.prototype._onRubberBandClicked = function(rb, event) {
+  nCanvas.prototype._onRubberBandClicked = function(rb, event) {
     if(this._mode=='text' && this._selection.objects.length==1 && this._selection.objects[0].type=='text') {
       // 選択中のテキストボックスがタップされた --> 編集開始
       var obj = this._selection.objects[0];
@@ -980,7 +964,7 @@
    * @param points    点列
    * @returns {*}
      */
-  Sketchpad.prototype._smoothStroke = function(points) {
+  nCanvas.prototype._smoothStroke = function(points) {
     if(points.length<4) {
       return points;
     }
@@ -1018,7 +1002,7 @@
    * @param drawToLayerInfo   描画先レイヤー情報（nullならlayerに描画）
    * @private
    */
-  Sketchpad.prototype._drawObject = function (obj, layers, drawToLayerInfo) {
+  nCanvas.prototype._drawObject = function (obj, layers, drawToLayerInfo) {
     if (!obj.alive) {
       return;
     }
@@ -1035,7 +1019,7 @@
    * @param drawToLayerInfo   描画先レイヤー（nullなら、obj.layerに描画）
    * @private
      */
-  Sketchpad.prototype._drawObjectCore = function (obj, drawToLayerInfo) {
+  nCanvas.prototype._drawObjectCore = function (obj, drawToLayerInfo) {
     var layerInfo = drawToLayerInfo || this.layers[obj.layer];
     if (obj.type == 'stroke') {
       this._drawStrokes(layerInfo, obj);
@@ -1055,7 +1039,7 @@
    * @param redrawObjects     true: 選択オブジェクトを含むレイヤー（_selection.layers）を再描画する：移動・リサイズ時の再描画
    * @private
      */
-  Sketchpad.prototype._drawSelection = function (redrawObjects) {
+  nCanvas.prototype._drawSelection = function (redrawObjects) {
     // overlay layerに、オブジェクト境界を描画
     this._clear(this._overlay);
     var layerInfo = this.layers[this._overlay];
@@ -1084,7 +1068,7 @@
    * @param compositeOperation    描画モード（デフォルト：source-over）
    * @private
    */
-  // Sketchpad.prototype._rectangle = function(layerInfo, rect, color, size, compositeOperation) {
+  // nCanvas.prototype._rectangle = function(layerInfo, rect, color, size, compositeOperation) {
   //   layerInfo.context.save();
   //   layerInfo.context.lineJoin = 'miter';
   //   layerInfo.context.lineCap = 'square';
@@ -1102,7 +1086,7 @@
    * @param obj         描画オブジェクト
    * @private
      */
-  Sketchpad.prototype._drawText = function(layerInfo, obj) {
+  nCanvas.prototype._drawText = function(layerInfo, obj) {
     var mt = this._measureText(obj.text, obj.font);
     var sx = obj.rect.width()/(mt.width||1);
     var sy = obj.rect.height()/(mt.height||1);
@@ -1131,7 +1115,7 @@
    * @param drawToLayerInfo   描画先レイヤー情報（nullならlayerに描画）
    * @private
    */
-  Sketchpad.prototype._drawSelectionRect = function (obj, layers, drawToLayerInfo) {
+  nCanvas.prototype._drawSelectionRect = function (obj, layers, drawToLayerInfo) {
     if (!obj.alive || obj.erase ) {
       return;
     }
@@ -1175,7 +1159,7 @@
    * @param obj           オブジェクト
    * @private
      */
-  Sketchpad.prototype._updateObjectTransform = function (obj) {
+  nCanvas.prototype._updateObjectTransform = function (obj) {
     if (obj.type == 'stroke') {
       if(obj.baseRect.equals(obj.rect)) {
         obj.transformer = null;
@@ -1196,13 +1180,13 @@
    * @param transformer   移動・リサイズ情報
    * @private
    */
-  Sketchpad.prototype._moveObject = function (obj, transformer) {
+  nCanvas.prototype._moveObject = function (obj, transformer) {
     obj.rect.copyFrom(obj.orgRect);
     transformer.rect(obj.rect);
     this._updateObjectTransform(obj);
   };
 
-  // Sketchpad.prototype.toObject = function () {
+  // nCanvas.prototype.toObject = function () {
   //   return {
   //     width: this.draw.canvas.width,
   //     height: this.draw.canvas.height,
@@ -1212,11 +1196,11 @@
   //   };
   // };
 
-  // Sketchpad.prototype.toJSON = function () {
+  // nCanvas.prototype.toJSON = function () {
   //   return JSON.stringify(this.toObject());
   // };
 
-  // Sketchpad.prototype.animate = function (ms, loop, loopDelay) {
+  // nCanvas.prototype.animate = function (ms, loop, loopDelay) {
   //   this._clear();
   //   var delay = ms;
   //   var callback = null;
@@ -1236,7 +1220,7 @@
   //   }
   // };
   //
-  // Sketchpad.prototype.cancelAnimation = function () {
+  // nCanvas.prototype.cancelAnimation = function () {
   //   for (var i = 0; i < this.animateIds.length; i++) {
   //     clearTimeout(this.animateIds[i]);
   //   }
@@ -1252,7 +1236,7 @@
    * @param layers        レイヤーフィルター
    * @param drawables     描画オブジェクト
    */
-  Sketchpad.prototype._redraw = function (layers, drawables) {
+  nCanvas.prototype._redraw = function (layers, drawables) {
     drawables = drawables || this.drawables;
     for (var i = 0; i < drawables.length; i++) {
       this._drawObject(drawables[i], layers);
@@ -1264,7 +1248,7 @@
    * キャンバス全体をクリアする
    * @param layers         レイヤーフィルター（nullならオーバーレイを除く全レイヤー）
    */
-  Sketchpad.prototype._clear = function (layers) {
+  nCanvas.prototype._clear = function (layers) {
     if(null==layers) {
       this.layers.forEach(function(c, i){
         if(i!=this._overlay) {
@@ -1288,7 +1272,7 @@
    * オーバーレイも含めて、すべてのレイヤをクリア
    * @private
    */
-  Sketchpad.prototype._clearAll = function () {
+  nCanvas.prototype._clearAll = function () {
     this.layers.forEach(function(c){
         c.context.clearRect(0, 0, c.canvas.width, c.canvas.height);
     });
@@ -1299,7 +1283,7 @@
    * @param flag      keepCurrent / keepSetting / free
    * @return {bool}   設定後の aspect （freeなら0）
    */
-  Sketchpad.prototype.keepAspect = function(flag) {
+  nCanvas.prototype.keepAspect = function(flag) {
     return this.rb.keepAspect(flag);
   };
 
@@ -1311,7 +1295,7 @@
    * @returns {*}   変更前の属性（変更がなければnull）
    * @private
    */
-  Sketchpad.prototype._modifyAttr = function (obj, attr) {
+  nCanvas.prototype._modifyAttr = function (obj, attr) {
     var old = null;
     if(attr.color && attr.color!=obj.color && (obj.type=='stroke' || obj.type=='text')) {
       old = {color: obj.color};
@@ -1339,7 +1323,7 @@
    * @returns {boolean}   true: レイヤーの再描画が必要 / false:対象オブジェクトだけを再描画
    * @private
    */
-  Sketchpad.prototype._applyUndoCore = function (his) {
+  nCanvas.prototype._applyUndoCore = function (his) {
     var obj = his.obj;
     switch (his.act) {
       case 'add':
@@ -1367,7 +1351,7 @@
    * @returns {boolean}   true: レイヤーの再描画が必要 / false:対象オブジェクトだけを再描画
    * @private
    */
-  Sketchpad.prototype._applyRedoCore = function(his) {
+  nCanvas.prototype._applyRedoCore = function(his) {
     var obj = his.obj;
     switch (his.act) {
       case 'del':
@@ -1394,7 +1378,7 @@
    * @param fn                履歴適用関数（_applyRedoCore/_applyUndoCore)
    * @private
    */
-  Sketchpad.prototype._applyGroupedHistory = function(groupedHistries, fn) {
+  nCanvas.prototype._applyGroupedHistory = function(groupedHistries, fn) {
     var needsRedraw = [];
     for(var i=groupedHistries.length-1 ; i>=0 ; i--) {
       var his = groupedHistries[i];
@@ -1415,7 +1399,7 @@
   /**
    * Undo
    */
-  Sketchpad.prototype.undo = function () {
+  nCanvas.prototype.undo = function () {
     if (this.curHistory == 0) {
       return;
     }
@@ -1455,7 +1439,7 @@
   /**
    * Redo
    */
-  Sketchpad.prototype.redo = function () {
+  nCanvas.prototype.redo = function () {
     if (this.curHistory >= this.undoHistory.length) {
       return;
     }
@@ -1493,7 +1477,7 @@
    * @param img           Imageオブジェクト
    * @returns {Rect|*}    挿入位置
      */
-  Sketchpad.prototype.getImageInitialPosition = function (img) {
+  nCanvas.prototype.getImageInitialPosition = function (img) {
     var rw = 1, rh = 1, r;
     var dw = img.width, dh = img.height;
     var width = this._width, height = this._height;
@@ -1527,7 +1511,7 @@
     });
   }
 
-  Sketchpad.prototype.getSelectionAsJson = function() {
+  nCanvas.prototype.getSelectionAsJson = function() {
     if(this._selection && this._selection.objects.length>0) {
       var r = {width: this._width, height: this._height, objects: []};
       this._selection.objects.forEach(function(e){
@@ -1545,7 +1529,7 @@
     return null;
   };
 
-  Sketchpad.prototype._addGroupedObjects = function(objects, layer) {
+  nCanvas.prototype._addGroupedObjects = function(objects, layer) {
     if(this._mode=='select' || this._state=='selected') {
       this.resetSelection();
     }
@@ -1594,7 +1578,7 @@
         });
   };
 
-  Sketchpad.prototype.paste = function(type, data, layer) {
+  nCanvas.prototype.paste = function(type, data, layer) {
     if(type=='text') {
       this.addText(data, layer);
     } else if(type=='image') {
@@ -1613,7 +1597,7 @@
    * @param url     画像のURL
    * @param layer   追加先レイヤー
      */
-  Sketchpad.prototype.addImage = function (url, layer) {
+  nCanvas.prototype.addImage = function (url, layer) {
     if(this._mode=='select' || this._state=='selected') {
       this.resetSelection();
     }
@@ -1649,7 +1633,7 @@
    * @param layers          対象レイヤの配列（nullなら全レイヤーが対象）
    * @param drawLayer       描画対象レイヤー（nullなら現在の設定から変更しない）
      */
-  Sketchpad.prototype.activateLayer = function (layers, drawLayer) {
+  nCanvas.prototype.activateLayer = function (layers, drawLayer) {
     this._activeLayers = [].concat(layers);
     this.layers.forEach(function(e, i){
       if(i!=this._overlay) {
@@ -1674,7 +1658,7 @@
    *                  'erase' 消しゴムモード
    *                  'select' 選択モード
    */
-  Sketchpad.prototype.setMode = function(mode) {
+  nCanvas.prototype.setMode = function(mode) {
     if(this._mode != mode) {
       var orgMode = this._mode;
       this._mode = mode;
@@ -1715,7 +1699,7 @@
   /**
    * 選択オブジェクトを削除する
    */
-  Sketchpad.prototype.deleteSelectedObjects = function() {
+  nCanvas.prototype.deleteSelectedObjects = function() {
     if(this._selection && this._selection.objects.length>0) {
       var history = [];
       var redrawMap = {};
@@ -1744,7 +1728,7 @@
    * @param layers      レイヤー番号|レイヤー番号の配列　（nullなら全レイヤー）
    * @param fnComplete  生成した画像を返すコールバック関数
    */
-  Sketchpad.prototype.toImage = function(fnComplete, layers) {
+  nCanvas.prototype.toImage = function(fnComplete, layers) {
     this.toCanvas(function(canvas){
       fnComplete(canvas ? canvas.toDataURL() : null);
     }, layers);
@@ -1756,7 +1740,7 @@
    * @param layers      レイヤー番号|レイヤー番号の配列　（nullなら全レイヤー）
    * @param fnComplete  生成した画像を返すコールバック関数
    */
-  Sketchpad.prototype.toCanvas = function(fnComplete, layers) {
+  nCanvas.prototype.toCanvas = function(fnComplete, layers) {
     var layerInfo = this.layers[this._overlay];
     layerInfo.element.css('display', 'none');   // ちらつき防止のため非表示化してから作業
     layerInfo.context.save();
@@ -1779,7 +1763,7 @@
    * @param layers      レイヤー番号|レイヤー番号の配列　（nullなら現在表示中のレイヤー）
    * @param fnComplete  生成した画像を保持したCanvas（layerInfoで渡したCanvas）を返す関数（失敗したらnull）
    */
-  Sketchpad.prototype._snapshot = function(layerInfo, fnComplete, layers) {
+  nCanvas.prototype._snapshot = function(layerInfo, fnComplete, layers) {
     // this.setMode('draw');
     layers = (null!=layers) ?  layers : this._activeLayers;
     var layerCount = this._overlay;
@@ -1804,12 +1788,12 @@
           if(fnComplete) {
             fnComplete(layerInfo.canvas);
           }
-          console.log('Sketchpad -- toImage completed.');
+          console.log('nCanvas -- toImage completed.');
         }
       };
       img.onerror = function() {
         error = true;
-        console.log('Sketchpad -- toImage error.');
+        console.log('nCanvas -- toImage error.');
         if(fnComplete) {
           console.log('error on loading images.');
           fnComplete(null, 'error on loading images.');
@@ -1851,7 +1835,7 @@
    * @returns {{layerCount: number, width: (number|*), height: (number|*)}}
    *
    */
-  Sketchpad.prototype.toObject = function(slim) {
+  nCanvas.prototype.toObject = function(slim) {
     var r = {
       layerCount: this.layers.length-1,
       width: this._width,
@@ -1879,7 +1863,7 @@
    *
    * @param complete    true: 変更を確定して履歴に積む / false:履歴には積まない
    */
-  Sketchpad.prototype.applyPenSizeToSelection = function(complete) {
+  nCanvas.prototype.applyPenSizeToSelection = function(complete) {
     var history = [], old;
     var attr = {size: this.penSize};
     var redraw = false;
@@ -1916,7 +1900,7 @@
    *
    * @param complete    true: 変更を確定して履歴に積む / false:履歴には積まない
    */
-  Sketchpad.prototype.applyColorToSelection = function(complete) {
+  nCanvas.prototype.applyColorToSelection = function(complete) {
     var history = [], old;
     var attr = {color: this.color};
     var redraw = false;
@@ -1948,8 +1932,7 @@
   };
 
 
-  $.Sketchpad = Sketchpad;
-
-  
+  window.mch = window.mch || {};
+  window.mch.nCanvas = nCanvas;
   
 })(jQuery);

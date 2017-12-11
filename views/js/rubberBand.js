@@ -342,7 +342,7 @@
             this[key] = this[key].bind(this);
         }
 
-        this.box = $('<div class="mmj-rubber-bands">').css('display', 'none');
+        this.box = $('<div class="rubber-bands">').css('display', 'none');
         this.l = $('<div class="rb rb-l">');
         this.t = $('<div class="rb rb-t">');
         this.r = $('<div class="rb rb-r">');
@@ -749,7 +749,8 @@
         }
     };
 
-    $.mmjrb = {
+    window.mch = window.mch || {};
+    mch.rb = {
         Point: Point,
         Rect: Rect,
         RubberBand: RubberBand,
