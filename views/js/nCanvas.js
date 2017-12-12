@@ -1,5 +1,13 @@
 //  nCanvas.js
 //
+//  Multi-Layered Drawing Canvas
+//
+//  - supports multi object types (Pen/Eraser/Text/Picture)
+//  - selectable objects: movable, resizable, removable.
+//  - unlimited undo/redo
+//  - smoothing lines
+//  - serialize and deserialize to/from JSON format
+//
 //    Copyright (C) 2016-2017  M.TOYOTA  All rights reserved.
 //
 

@@ -1,5 +1,13 @@
 /**
  * drawpad.js
+ * 
+ * DrawPad demo compornent using nCanvas
+ * 
+ * - 2-layered drawing canvas.
+ * - supports multi object types (Pen/Eraser/Text/Picture)
+ * - all objects are selectable and editable, i.e. movable, resizable removable.
+ * - undo/redo unlimitedly
+ * 
  * Created by toyota on 2016/11/22.
  * Copyright 2016 M.TOYOTA
  * All rights reserved.

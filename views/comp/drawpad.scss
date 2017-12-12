@@ -1,0 +1,56 @@
+@charset "utf-8";
+
+@import "../scss/ncanvas.scss";
+
+$iconButtonColor: #757575;  // .mdl-color--grey-600
+
+.drawpad {
+  color: $iconButtonColor;
+
+  .drawpad-toolbar {
+    @include display_flex;
+    @include align_items(center);
+    padding: 4px 0;
+
+    button {
+      margin: 0 4px;
+    }
+    button.on {
+      background-color: $color-primary;
+      color: white;
+    }
+
+    .pen-size-box {
+      max-width: 300px;
+    }
+
+    .spacer-16 {
+      margin-left: 16px;
+    }
+    .spacer {
+      @include flex_grow(1);
+    }
+
+    .option-box {
+      @include display_flex;
+      @include align_items(center);
+      margin-left: 24px;
+    }
+
+    .pen-sample-box {
+      padding: 2px;
+      width: 50px;
+      @include display_flex;
+      @include round_border(lightgray, 2px);
+
+      .pen-sample-outer {
+        width: 28px;
+        @include display_flex;
+      }
+
+      .pen-sample {
+        margin: auto;
+      }
+    }
+  }
+}

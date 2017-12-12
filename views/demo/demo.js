@@ -1,6 +1,15 @@
 /**
  * demo.js
+ *
+ * nCanvas and DrawPad Demo
+ * 
+ * - all feature of DrawPad
+ * - composing Animation-GIF
+ *   ... using Kevin Kwok's library (https://github.com/antimatter15/jsgif)
+ * 
  * Created by toyota on 2016/11/22.
+ * Copyright 2016-2017 M.TOYOTA
+ * All rights reserved.
  */
 'use strict';
 

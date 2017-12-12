@@ -1,140 +1,89 @@
 @charset "utf-8";
 
-@import "custom-mdl.scss";
+@import "_common.scss";
+@import "_custom-mdl.scss";
 
-$iconButtonColor: #757575;  // .mdl-color--grey-600
+div.canvas-box {
+  position: relative;
+  @include square_border(lightgray);
+  margin: auto;
+  width: 640px;
+  height: 480px;
 
-.drawpad {
-  color: $iconButtonColor;
-
-  div.canvas-box {
-    position: relative;
-    @include square_border(lightgray);
-    margin: auto;
-    width: 640px;
-    height: 480px;
-
-    canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-
-    .text-box {
-      position: absolute;
-      width: 100px;
-      top: 100px;
-      left: 100px;
-      display: none;
-      font-size: 14px;
-      line-height: 1.2em;
-      @include mch-font-family;
-    }
-  }
-
-  .drawpad-toolbar {
-    @include display_flex;
-    @include align_items(center);
-    padding: 4px 0;
-
-    button {
-      margin: 0 4px;
-    }
-    button.on {
-      background-color: $color-primary;
-      color: white;
-    }
-
-    .pen-size-box {
-      max-width: 300px;
-    }
-
-    .spacer-16 {
-      margin-left: 16px;
-    }
-    .spacer {
-      @include flex_grow(1);
-    }
-
-    .option-box {
-      @include display_flex;
-      @include align_items(center);
-      margin-left: 24px;
-    }
-
-    .pen-sample-box {
-      padding: 2px;
-      width: 50px;
-      @include display_flex;
-      @include round_border(lightgray, 2px);
-
-      .pen-sample-outer {
-        width: 28px;
-        @include display_flex;
-      }
-
-
-      .pen-sample {
-        margin: auto;
-      }
-    }
-  }
-
-  .rubber-bands {
+  canvas {
     position: absolute;
     top: 0;
     left: 0;
-    overflow: visible;
+  }
+
+  .text-box {
+    position: absolute;
+    width: 100px;
+    top: 100px;
+    left: 100px;
     display: none;
-
-    .rb-content {
-      position: absolute;
-      cursor: move;
-      box-sizing: border-box;
-      @include square_border($color-primary);
-    }
-    .rb-t, .rb-b {
-      position: absolute;
-      height: 15px;
-      margin-top: -7px;
-      cursor: n-resize;
-      box-sizing: border-box;
-    }
-    .rb-l, .rb-r {
-      position: absolute;
-      width: 15px;
-      margin-left: -7px;
-      cursor: e-resize;
-      box-sizing: border-box;
-      //background-color: #00A000;
-    }
-
-    .knob {
-      position: absolute;
-      width: 15px;
-      height: 15px;
-      margin-left: -7px;
-      margin-top: -7px;
-      @include square_border(gray);
-      background-color: $color-primary;
-      box-sizing: border-box;
-    }
-    .knob-l,
-    .knob-r {
-      cursor: e-resize;
-    }
-    .knob-t,
-    .knob-b {
-      cursor: n-resize;
-    }
-
-    .knob-rt,
-    .knob-lb {
-      cursor: ne-resize;
-    }
-    .knob-lt,
-    .knob-rb {
-      cursor: nw-resize;
-    }
+    font-size: 14px;
+    line-height: 1.2em;
+    @include mch-font-family;
   }
 }
+
+.rubber-bands {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+  display: none;
+
+  .rb-content {
+    position: absolute;
+    cursor: move;
+    box-sizing: border-box;
+    @include square_border($color-primary);
+  }
+  .rb-t, .rb-b {
+    position: absolute;
+    height: 15px;
+    margin-top: -7px;
+    cursor: n-resize;
+    box-sizing: border-box;
+  }
+  .rb-l, .rb-r {
+    position: absolute;
+    width: 15px;
+    margin-left: -7px;
+    cursor: e-resize;
+    box-sizing: border-box;
+    //background-color: #00A000;
+  }
+
+  .knob {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    margin-left: -7px;
+    margin-top: -7px;
+    @include square_border(gray);
+    background-color: $color-primary;
+    box-sizing: border-box;
+  }
+  .knob-l,
+  .knob-r {
+    cursor: e-resize;
+  }
+  .knob-t,
+  .knob-b {
+    cursor: n-resize;
+  }
+
+  .knob-rt,
+  .knob-lb {
+    cursor: ne-resize;
+  }
+  .knob-lt,
+  .knob-rb {
+    cursor: nw-resize;
+  }
+}
+
+

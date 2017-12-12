@@ -1,21 +1,4 @@
 @charset "UTF-8";
-/**
- * Copyright 2015 Google Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/* ==========  Color Palettes  ========== */
-/* colors.scss */
 /* Rules for sizing the icon. */
 .material-icons.md-14 {
   font-size: 14px; }
@@ -89,27 +72,90 @@
   -moz-filter: blur(2px);
   -o-filter: blur(2px); }
 
+/**
+ * Copyright 2015 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* ==========  Color Palettes  ========== */
+/* colors.scss */
+div.canvas-box {
+  position: relative;
+  border: solid 1px lightgray;
+  margin: auto;
+  width: 640px;
+  height: 480px; }
+  div.canvas-box canvas {
+    position: absolute;
+    top: 0;
+    left: 0; }
+  div.canvas-box .text-box {
+    position: absolute;
+    width: 100px;
+    top: 100px;
+    left: 100px;
+    display: none;
+    font-size: 14px;
+    line-height: 1.2em;
+    font-family: "Avenir", "Helvetica", "Arial", "Meiryo UI", "メイリオ", "Meiryo", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", sans-serif; }
+
+.rubber-bands {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+  display: none; }
+  .rubber-bands .rb-content {
+    position: absolute;
+    cursor: move;
+    box-sizing: border-box;
+    border: solid 1px rgb(63,81,181); }
+  .rubber-bands .rb-t, .rubber-bands .rb-b {
+    position: absolute;
+    height: 15px;
+    margin-top: -7px;
+    cursor: n-resize;
+    box-sizing: border-box; }
+  .rubber-bands .rb-l, .rubber-bands .rb-r {
+    position: absolute;
+    width: 15px;
+    margin-left: -7px;
+    cursor: e-resize;
+    box-sizing: border-box; }
+  .rubber-bands .knob {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    margin-left: -7px;
+    margin-top: -7px;
+    border: solid 1px gray;
+    background-color: rgb(63,81,181);
+    box-sizing: border-box; }
+  .rubber-bands .knob-l,
+  .rubber-bands .knob-r {
+    cursor: e-resize; }
+  .rubber-bands .knob-t,
+  .rubber-bands .knob-b {
+    cursor: n-resize; }
+  .rubber-bands .knob-rt,
+  .rubber-bands .knob-lb {
+    cursor: ne-resize; }
+  .rubber-bands .knob-lt,
+  .rubber-bands .knob-rb {
+    cursor: nw-resize; }
+
 .drawpad {
   color: #757575; }
-  .drawpad div.canvas-box {
-    position: relative;
-    border: solid 1px lightgray;
-    margin: auto;
-    width: 640px;
-    height: 480px; }
-    .drawpad div.canvas-box canvas {
-      position: absolute;
-      top: 0;
-      left: 0; }
-    .drawpad div.canvas-box .text-box {
-      position: absolute;
-      width: 100px;
-      top: 100px;
-      left: 100px;
-      display: none;
-      font-size: 14px;
-      line-height: 1.2em;
-      font-family: "Avenir", "Helvetica", "Arial", "Meiryo UI", "メイリオ", "Meiryo", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", sans-serif; }
   .drawpad .drawpad-toolbar {
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -156,50 +202,6 @@
         display: flex; }
       .drawpad .drawpad-toolbar .pen-sample-box .pen-sample {
         margin: auto; }
-  .drawpad .rubber-bands {
-    position: absolute;
-    top: 0;
-    left: 0;
-    overflow: visible;
-    display: none; }
-    .drawpad .rubber-bands .rb-content {
-      position: absolute;
-      cursor: move;
-      box-sizing: border-box;
-      border: solid 1px rgb(63,81,181); }
-    .drawpad .rubber-bands .rb-t, .drawpad .rubber-bands .rb-b {
-      position: absolute;
-      height: 15px;
-      margin-top: -7px;
-      cursor: n-resize;
-      box-sizing: border-box; }
-    .drawpad .rubber-bands .rb-l, .drawpad .rubber-bands .rb-r {
-      position: absolute;
-      width: 15px;
-      margin-left: -7px;
-      cursor: e-resize;
-      box-sizing: border-box; }
-    .drawpad .rubber-bands .knob {
-      position: absolute;
-      width: 15px;
-      height: 15px;
-      margin-left: -7px;
-      margin-top: -7px;
-      border: solid 1px gray;
-      background-color: rgb(63,81,181);
-      box-sizing: border-box; }
-    .drawpad .rubber-bands .knob-l,
-    .drawpad .rubber-bands .knob-r {
-      cursor: e-resize; }
-    .drawpad .rubber-bands .knob-t,
-    .drawpad .rubber-bands .knob-b {
-      cursor: n-resize; }
-    .drawpad .rubber-bands .knob-rt,
-    .drawpad .rubber-bands .knob-lb {
-      cursor: ne-resize; }
-    .drawpad .rubber-bands .knob-lt,
-    .drawpad .rubber-bands .knob-rb {
-      cursor: nw-resize; }
 
 div.anim-tools {
   margin: 0 16px; }

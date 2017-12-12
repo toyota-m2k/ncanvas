@@ -1,6 +1,9 @@
 /**
  * mmjClipboard.js
+ * 
  * Created by toyota on 2016/12/15.
+ * Copyright 2016-2017 M.TOYOTA
+ * All rights reserved.
  */
 
 (function ($) {

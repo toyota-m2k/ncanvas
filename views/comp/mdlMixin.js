@@ -1,6 +1,8 @@
 /**
  * MDL用DOMツリー更新メソッド（各vueインスタンスにmixinして使用）
  * Created by toyota on 2016/07/29.
+ * Copyright 2016-2017 M.TOYOTA
+ * All rights reserved.
  */
 'use strict';
 

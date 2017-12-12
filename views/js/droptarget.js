@@ -21,7 +21,7 @@
  *      ドロップの受付を無効化
  *      
  * Created by toyota on 2016/10/12.
- * Copyright 2016 M.TOYOTA
+ * Copyright 2016-2017 M.TOYOTA
  * All rights reserved.
  *
  */
