@@ -39,7 +39,11 @@
                     color: '#000000',
                     backgroundColor: '#ffffff'
                 },
-                selectTypes: {}
+                selectTypes: {},
+                canvasSize: {
+                    width: 640,
+                    height: 400
+                }
 
             }
         },
@@ -47,12 +51,16 @@
         ready: function() {
             var self = this;
             var $el = $(this.$el);
+            this.canvasSize = { 
+                width: this.width || this.canvasSize.width,
+                height: this.height || this.canvasSize.height
+            };
             this.drawpad = new mch.nCanvas({
                 element: $el.find('.canvas-box'),
                 layerCount: 2,
                 initialLayer: 1,
-                width: this.width || 400,
-                height: this.height || 300,
+                width: this.canvasSize.width,
+                height: this.canvasSize.height,
                 manualCompleteSelection: true,
                 on: {
                     canRedo: function(f) {
@@ -83,7 +91,7 @@
             // });
             $(this.$el).mchDropTarget({
                 dropped: function(files) {
-                    self.setBgImage(files);
+                    self.setImage(files, self.layer=='fg' ? 1 : 0);
                 }
             });
             
@@ -164,6 +172,12 @@
                 if(this.state=='selected' && this.selectTypes.stroke) {
                     this.drawpad.applyPenSizeToSelection(true);
                 }
+            },
+
+            getImageAndOpenPage: function() {
+                this.toImage(function(dataUrl){
+                    window.open(dataUrl);
+                }, null);
             },
 
             toImage: function(completed, layers) {

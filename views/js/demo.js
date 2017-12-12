@@ -30,8 +30,9 @@
         mixins: [window.mch.vueMdlMixin],           // update_mdl();
         el: '#vueRoot',
         data: {
-            images: [],
+            frames: [],
             repeat: 0,
+            initialDelay: 500,
             delay: 500,
             state: 'first'
         },
@@ -73,7 +74,7 @@
             window.mch.clipboard.unregister('drawpad');
         },
         methods: {
-            snapshot: function() {
+            toggleState: function() {
                 if(!this.encoder) {
                     // Animation GIF のリピート数がちょっと特殊なので、小細工。
                     //
@@ -94,31 +95,54 @@
                     }
 
                     this.encoder = new GIFEncoder();
+                    this.encoder.setSize(this.$refs['drawpad'].canvasSize.width, this.$refs['drawpad'].canvasSize.height);
                     this.encoder.setRepeat(repeat);
-                    this.encoder.setDelay(this.delay);
+                    this.encoder.setDelay(this.initialDelay);
                     this.encoder.start();
-                    this.images = [];
+                    this.frames = [];
                     this.state = 'composing';
-                }
-                this.$refs['drawpad'].snapshot(function(canvas){
-                    this.encoder.addFrame(canvas.getContext('2d'), this.delay);
-                    this.images.push(canvas.toDataURL());
-                }.bind(this));
-            },
-            complete: function() {
-                if(this.encoder) {
-                    this.encoder.finish();
-                    var binary_gif = this.encoder.stream().getData();
-                    var src = 'data:image/gif;base64,'+encode64(binary_gif);
-                    this.images = [src];
+                } else {
+                    this.frames = [];
                     this.encoder = null;
                     this.state = 'first';
                 }
             },
-            reset: function() {
-                this.images = [];
-                this.encoder = null;
-                this.state = 'first';
+            addFrame: function() {
+                if(this.encoder) {
+                this.$refs['drawpad'].snapshot(function(canvas){
+                        // this.encoder.addFrame(canvas.getContext('2d'), this.delay);
+                        this.frames.push({
+                            data: canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data,
+                            url: canvas.toDataURL(),
+                            delay: this.delay
+                        });
+                }.bind(this));
+                }
+            },
+            removeFrame: function() {
+                if(this.encoder && this.frames.length>0) {
+                    this.frames.pop();
+                }
+            },
+            complete: function() {
+                if(this.encoder) {
+                    for(var i=0, ci=this.frames.length ; i<ci ; i++) {
+                        this.encoder.addFrame(this.frames[i].data, this.frames[i].delay);
+                    }
+                    this.encoder.finish();
+                    var binary_gif = this.encoder.stream().getData();
+                    var src = 'data:image/gif;base64,'+encode64(binary_gif);
+                    this.frames = [{url:src}];
+                    this.encoder = null;
+                    this.state = 'first';
+                }
+            },
+        },
+        computed: {
+            images: function() {
+                return this.frames.map(function(obj){
+                    return obj.url;
+                });
             }
         }
     });

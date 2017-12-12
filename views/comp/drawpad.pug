@@ -33,7 +33,7 @@ script#drawpad-template(type='text/x-template')
 
                 /// Add Bg Image Button
                 label.mdl-button.mdl-js-button.mdl-button--icon('v-show'='mode=="draw"', for='image-{{ctrid}}', id='{{ctrid}}btn-option-image')
-                    i.material-icons photo_camera
+                    i.material-icons photo_library
                     input.fileInput(type="file", name="image", id="image-{{ctrid}}", style="display:none;", 'v-on:change'='insertImage')
 
 
@@ -58,10 +58,10 @@ script#drawpad-template(type='text/x-template')
             /// Undo/Redo Button
             button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='undo()', ':disabled'='!canUndo', id='{{ctrid}}btn-undo')
                 i.material-icons undo
-            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='redo()', ':disabled'='!canRedo',, id='{{ctrid}}btn-redo')
+            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='redo()', ':disabled'='!canRedo', id='{{ctrid}}btn-redo')
                 i.material-icons redo
-            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='toImage()')
-                | Save
+            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='getImageAndOpenPage()', id='{{ctrid}}btn-save')
+                i.material-icons photo_camera
 
             div.mdl-tooltip(for='{{ctrid}}btn-tool-pen') Pen
             div.mdl-tooltip(for='{{ctrid}}btn-tool-eraser') Eraser
@@ -74,6 +74,7 @@ script#drawpad-template(type='text/x-template')
             div.mdl-tooltip(for='{{ctrid}}btn-layer-bg') Show background layer
             div.mdl-tooltip(for='{{ctrid}}btn-undo') Undo
             div.mdl-tooltip(for='{{ctrid}}btn-redo') Redo
+            div.mdl-tooltip(for='{{ctrid}}btn-save') Snapshot
 
         div.canvas-box
 

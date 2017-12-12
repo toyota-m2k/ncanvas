@@ -47,25 +47,41 @@ html
                 div.page-content
                     drawpad('v-ref:drawpad', width='640', height='480')
                 div.anim-tools
-                    button.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect('v-show'='state=="first"', 'v-on:click'='snapshot') First Frame
-                    button.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect('v-show'='state=="composing"', 'v-on:click'='snapshot') Add Frame
+                    button.mdl-button.mdl-js-button.mdl-button--icon('v-show'='state=="first"', 'v-on:click.stop.prevent'='toggleState', id='btn-toggle-state-off')
+                        i.material-icons local_movies
+                    button.mdl-button.mdl-js-button.mdl-button--icon.on('v-show'='state!="first"', 'v-on:click.stop.prevent'='toggleState', id='btn-toggle-state-on')
+                        i.material-icons local_movies
 
-                    div.mdl-textfield.mdl-js-textfield
-                        input#delay.mdl-textfield__input(type="text", pattern="-?[0-9]*(\.[0-9]+)?", v-model='delay')
-                        label.mdl-textfield__label(for="delay") Delay (ms)
+                    div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label('v-show'='state=="first"')
+                        input#delay.mdl-textfield__input(type="text", pattern="-?[0-9]*(\.[0-9]+)?", v-model='initialDelay')
+                        label.mdl-textfield__label(for="initialDelay") Initial Delay (ms)
                         span.mdl-textfield__error Input is not a number!
 
-                    div.mdl-textfield.mdl-js-textfield('v-show'='state=="first"')
+                    div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label('v-show'='state=="first"')
                         input#repeat.mdl-textfield__input(type="text", pattern="-?[0-9]*(\.[0-9]+)?", v-model='repeat')
                         label.mdl-textfield__label(for="repeat") Repeat (0:infinite)
                         span.mdl-textfield__error Input is not a number!
 
+                    div.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label('v-show'='state!="first"')
+                        input#delay.mdl-textfield__input(type="text", pattern="-?[0-9]*(\.[0-9]+)?", v-model='delay')
+                        label.mdl-textfield__label(for="delay") Delay (ms)
+                        span.mdl-textfield__error Input is not a number!
 
-                    button.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect('v-show'='state=="composing"', 'v-on:click'='complete') Complete
-                    button.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect('v-show'='state=="composing"||images.length>0', 'v-on:click'='reset') New Animation
+                    button.mdl-button.mdl-js-button.mdl-button--icon('v-show'='state=="composing"', 'v-on:click.stop.prevent'='addFrame', id='btn-add-frame')
+                        i.material-icons add
+                    button.mdl-button.mdl-js-button.mdl-button--icon('v-show'='state=="composing"', 'v-on:click.stop.prevent'='removeFrame', ':disabled'='frames.length==0', id='btn-remove-frame')
+                        i.material-icons remove
+                    button.mdl-button.mdl-js-button.mdl-button--icon('v-show'='state=="composing"', 'v-on:click.stop.prevent'='complete', id='btn-complete')
+                        i.material-icons done
+
+                    div.mdl-tooltip(for='btn-toggle-state-off') Begin!
+                    div.mdl-tooltip(for='btn-toggle-state-on') Cancel and Reset
+                    div.mdl-tooltip(for='btn-add-frame') Add Frame
+                    div.mdl-tooltip(for='btn-remove-frame') Remove Last Frame
+                    div.mdl-tooltip(for='btn-complete') Finish!
 
                 div.paint-result
-                    img(v-for='s in images', width='160', height='120', ':src'='s')
+                    img(v-for='s in images', width='160', height='120', ':src'='s', track-by='$index')
 
     include comp/mdlMixin.pug
     include comp/drawpad.pug

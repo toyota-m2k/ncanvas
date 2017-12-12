@@ -72,7 +72,7 @@
       $(this.eventTarget).css({cursor: 'crosshair'});
     }
 
-    this.elText = $('<textarea class="text-unit">');
+    this.elText = $('<textarea class="text-box">');
     this.root.append(this.elText);
 
     this.rb = new RubberBand(this.root);

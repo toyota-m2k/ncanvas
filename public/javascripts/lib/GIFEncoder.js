@@ -130,7 +130,7 @@ GIFEncoder = function() {
 	 * BitmapData object to be treated as a GIF's frame
 	 */
 
-	// modified by M.TOYOTA for Bongo on 2016.12.16
+	// modified by M.TOYOTA for nCanvas on 2016.12.16
 	// var addFrame = exports.addFrame = function addFrame(im, is_imageData) {
 	var addFrame = exports.addFrame = function addFrame(im, localDelay) {
 
@@ -141,7 +141,7 @@ GIFEncoder = function() {
 		var ok = true;
 
 		try {
-			// modified by M.TOYOTA for Bongo on 2016.12.16
+			// modified by M.TOYOTA for nCanvas on 2016.12.16
 			// if (!is_imageData) {
 			if(im.getImageData) {
 				image = im.getImageData(0, 0, im.canvas.width, im.canvas.height).data;
@@ -161,7 +161,7 @@ GIFEncoder = function() {
 				}
 			}
 
-			// appended by M.TOYOTA for Bongo on 2016.12.16
+			// appended by M.TOYOTA for nCanvas on 2016.12.16
 			var _delayBack = null;
 			if(localDelay!=null) {
 				_delayBack = delay;
@@ -171,7 +171,7 @@ GIFEncoder = function() {
 			
 			writeGraphicCtrlExt(); // write graphic control extension
 
-			// appended by M.TOYOTA for Bongo on 2016.12.16
+			// appended by M.TOYOTA for nCanvas on 2016.12.16
 			if(localDelay!=null) {
 				delay = _delayBack;
 			}
