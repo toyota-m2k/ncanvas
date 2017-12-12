@@ -7,7 +7,7 @@ html
         link(rel='stylesheet', href="https://fonts.googleapis.com/icon?family=Material+Icons")
         link(rel='stylesheet', href="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.4.4/dialog-polyfill.min.css")
         link(rel='stylesheet', href="https://cdn.materialdesignicons.com/1.7.22/css/materialdesignicons.min.css")
-        link(rel='stylesheet', href="/stylesheets/demo.css")
+        link(rel='stylesheet', href="/stylesheets/demo/demo.css")
         block links
 
         script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js')
@@ -22,10 +22,10 @@ html
         //- script(src='/extlib/css-element-queries/src/ResizeSensor.js')
         //- link(rel="stylesheet", href='/extlib/jcrop/css/jquery.Jcrop.css')
 
-        script(src='/javascripts/lib/LZWEncoder.js')
-        script(src='/javascripts/lib/NeuQuant.js')
-        script(src='/javascripts/lib/GIFEncoder.js')
-        script(src='/javascripts/droptarget.js')
+        //- script(src='/javascripts/lib/LZWEncoder.js')
+        //- script(src='/javascripts/lib/NeuQuant.js')
+        //- script(src='/javascripts/lib/GIFEncoder.js')
+        //- script(src='/javascripts/droptarget.js')
         
 
     body
@@ -83,8 +83,12 @@ html
                 div.paint-result
                     img(v-for='s in images', width='160', height='120', ':src'='s', track-by='$index')
 
-    include comp/mdlMixin.pug
-    include comp/drawpad.pug
+    include ../comp/mdlMixin.pug
+    include ../comp/drawpad.pug
     script(type="text/javascript")
-        include js/clipboard.js
-        include js/demo.js
+        include ../js/gif/LZWEncoder.js
+        include ../js/gif/GIFEncoder.js
+        include ../js/gif/NeuQuant.js
+        include ../js/droptarget.js
+        include ../js/clipboard.js
+        include demo.js

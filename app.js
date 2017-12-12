@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use(sass({
-  src: path.join(__dirname, 'views/scss'),
+  src: path.join(__dirname, 'views'),
   dest: path.join(__dirname, 'public/stylesheets'),
   sourceMap: true,
   debug: true,
