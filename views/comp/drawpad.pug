@@ -60,8 +60,8 @@ script#drawpad-template(type='text/x-template')
                 i.material-icons undo
             button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='redo()', ':disabled'='!canRedo', id='{{ctrid}}btn-redo')
                 i.material-icons redo
-            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='getImageAndOpenPage()', id='{{ctrid}}btn-save')
-                i.material-icons photo_camera
+            //- button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='getImageAndOpenPage()', id='{{ctrid}}btn-save')
+            //-     i.material-icons photo_camera
 
             div.mdl-tooltip(for='{{ctrid}}btn-tool-pen') Pen
             div.mdl-tooltip(for='{{ctrid}}btn-tool-eraser') Eraser
@@ -74,7 +74,7 @@ script#drawpad-template(type='text/x-template')
             div.mdl-tooltip(for='{{ctrid}}btn-layer-bg') Show background layer
             div.mdl-tooltip(for='{{ctrid}}btn-undo') Undo
             div.mdl-tooltip(for='{{ctrid}}btn-redo') Redo
-            div.mdl-tooltip(for='{{ctrid}}btn-save') Snapshot
+            //- div.mdl-tooltip(for='{{ctrid}}btn-save') Snapshot
 
         div.canvas-box
 
