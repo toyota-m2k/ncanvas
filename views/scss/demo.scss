@@ -2,3 +2,28 @@
 
 @import "ncanvas.scss";
 
+div.anim-tools {
+    margin: 0 16px;
+  
+    div.mdl-textfield {
+      width: 100px;
+      margin-right: 8px;
+    }
+    button {
+      margin-right: 8px;
+    }
+  
+    button.on {
+      background-color: $color-primary;
+      color: white;
+    }
+}
+
+div.paint-result {
+    margin: 0 8px; 
+    img {
+        @include round_border(lightgray, 2px);
+        margin: 2px;
+    }
+}
+  

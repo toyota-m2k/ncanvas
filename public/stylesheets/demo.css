@@ -89,14 +89,6 @@
   -moz-filter: blur(2px);
   -o-filter: blur(2px); }
 
-div.anim-tools {
-  margin: 0 16px; }
-  div.anim-tools div.mdl-textfield {
-    width: 100px;
-    margin-right: 8px; }
-  div.anim-tools button {
-    margin-right: 8px; }
-
 .drawpad {
   color: #757575; }
   .drawpad div.canvas-box {
@@ -129,7 +121,7 @@ div.anim-tools {
     .drawpad .drawpad-toolbar button {
       margin: 0 4px; }
     .drawpad .drawpad-toolbar button.on {
-      background-color: "63,81,181";
+      background-color: rgb(63,81,181);
       color: white; }
     .drawpad .drawpad-toolbar .pen-size-box {
       max-width: 300px; }
@@ -174,7 +166,7 @@ div.anim-tools {
       position: absolute;
       cursor: move;
       box-sizing: border-box;
-      border: solid 1px "63,81,181"; }
+      border: solid 1px rgb(63,81,181); }
     .drawpad .rubber-bands .rb-t, .drawpad .rubber-bands .rb-b {
       position: absolute;
       height: 15px;
@@ -194,7 +186,7 @@ div.anim-tools {
       margin-left: -7px;
       margin-top: -7px;
       border: solid 1px gray;
-      background-color: "63,81,181";
+      background-color: rgb(63,81,181);
       box-sizing: border-box; }
     .drawpad .rubber-bands .knob-l,
     .drawpad .rubber-bands .knob-r {
@@ -208,5 +200,25 @@ div.anim-tools {
     .drawpad .rubber-bands .knob-lt,
     .drawpad .rubber-bands .knob-rb {
       cursor: nw-resize; }
+
+div.anim-tools {
+  margin: 0 16px; }
+  div.anim-tools div.mdl-textfield {
+    width: 100px;
+    margin-right: 8px; }
+  div.anim-tools button {
+    margin-right: 8px; }
+  div.anim-tools button.on {
+    background-color: rgb(63,81,181);
+    color: white; }
+
+div.paint-result {
+  margin: 0 8px; }
+  div.paint-result img {
+    border: solid 1px lightgray;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    margin: 2px; }
 
 /*# sourceMappingURL=demo.css.map */
