@@ -45,38 +45,40 @@
             delay: 500,
             state: 'first'
         },
-        ready: function() {
-            var self = this;
-            window.mch.clipboard.enable();
-            window.mch.clipboard.register('drawpad', {
-                paste: function(event) {
-                    if(window.mch.clipboard.getImageData(event, function(image) {
-                            self.$refs['drawpad'].paste('image', image);
-                        })) {
-                        return true;
-                    }
-                    var text = window.mch.clipboard.getTextData(event, 'text/plain');
-                    if(text) {
-                        self.$refs['drawpad'].paste('text', text);
-                        return true;
-                    }
+        mounted: function() {
+            this.$nextTick(function(){
+                var self = this;
+                window.mch.clipboard.enable();
+                window.mch.clipboard.register('drawpad', {
+                    paste: function(event) {
+                        if(window.mch.clipboard.getImageData(event, function(image) {
+                                self.$refs['drawpad'].paste('image', image);
+                            })) {
+                            return true;
+                        }
+                        var text = window.mch.clipboard.getTextData(event, 'text/plain');
+                        if(text) {
+                            self.$refs['drawpad'].paste('text', text);
+                            return true;
+                        }
+                        
+                        text = window.mch.clipboard.getTextData(event, 'text/x-mch-draw');
+                        if(text) {
+                            self.$refs['drawpad'].paste('stroke', text);
+                            return true;
+                        }
+                        return false;
+                    },
                     
-                    text = window.mch.clipboard.getTextData(event, 'text/x-mch-draw');
-                    if(text) {
-                        self.$refs['drawpad'].paste('stroke', text);
-                        return true;
+                    copy: function() {
+                        var d = self.$refs['drawpad'].copy();
+                        return d ? {type:'text/x-mch-draw', value:d} : null;
+                    },
+                    cut: function(complete) {
+                        var d = self.$refs['drawpad'].cut();
+                        return d ? {type:'text/x-mch-draw', value:d} : null;
                     }
-                    return false;
-                },
-                
-                copy: function() {
-                    var d = self.$refs['drawpad'].copy();
-                    return d ? {type:'text/x-mch-draw', value:d} : null;
-                },
-                cut: function(complete) {
-                    var d = self.$refs['drawpad'].cut();
-                    return d ? {type:'text/x-mch-draw', value:d} : null;
-                }
+                });
             });
         },
         beforeDestroy: function() {
