@@ -71,7 +71,7 @@ html
                         i.material-icons add
                     button.mdl-button.mdl-js-button.mdl-button--icon('v-show'='state=="composing"', 'v-on:click.stop.prevent'='removeFrame', ':disabled'='frames.length==0', id='btn-remove-frame')
                         i.material-icons remove
-                    button.mdl-button.mdl-js-button.mdl-button--icon('v-show'='state=="composing"', 'v-on:click.stop.prevent'='complete', id='btn-complete')
+                    button.mdl-button.mdl-js-button.mdl-button--icon('v-show'='state=="composing"', 'v-on:click.stop.prevent'='complete', ':disabled'='frames.length<2', id='btn-complete')
                         i.material-icons done
 
                     div.mdl-tooltip(for='btn-toggle-state-off') Begin!
