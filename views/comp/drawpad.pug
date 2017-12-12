@@ -5,14 +5,14 @@ script#drawpad-template(type='text/x-template')
     div.drawpad
         div.drawpad-toolbar
             // tool button
-            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='mode="draw"', ':class'='mode=="draw"?"on":""', id='{{ctrid}}btn-tool-pen')
+            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='mode="draw"', ':class'='mode=="draw"?"on":""', :id='ctrid + "btn-tool-pen"')
                 i.material-icons mode_edit
-            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='mode="erase"', ':class'='mode=="erase"?"on":""', id='{{ctrid}}btn-tool-eraser')
+            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='mode="erase"', ':class'='mode=="erase"?"on":""', :id='ctrid + "btn-tool-eraser"')
                 i.mdi.mdi-eraser
-            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='mode="text"', ':class'='mode=="text"?"on":""', id='{{ctrid}}btn-tool-text')
+            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='mode="text"', ':class'='mode=="text"?"on":""', :id='ctrid + "btn-tool-text"')
                 i.material-icons text_fields
 
-            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='mode="select"', ':class'='mode=="select"?"on":""', id='{{ctrid}}btn-tool-select')
+            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='mode="select"', ':class'='mode=="select"?"on":""', :id='ctrid+"btn-tool-select"')
                 i.mdi.mdi-cursor-default
 
             div.spacer.option-box
@@ -24,17 +24,17 @@ script#drawpad-template(type='text/x-template')
                     span {{penSize}}
 
                 /// Pen/Eraser Size Slider
-                div.pen-size-box('v-show'='mode=="draw"||mode=="erase"||(state=="selected"&&(selectTypes.stroke))', id='{{ctrid}}btn-option-size')
+                div.pen-size-box('v-show'='mode=="draw"||mode=="erase"||(state=="selected"&&(selectTypes.stroke))', :id='ctrid+"btn-option-size"')
                     input.pen-size.mdl-slider.mdl-js-slider(type="range", min="1", max="24", value="5", 'v-on:input'='penSize=$event.target.value', 'v-on:change'='penSizeChanged()')
 
                 /// Pen Color
-                input.sr-8(v-show='mode=="draw"||mode=="text"||(state=="selected"&&(selectTypes.stroke||selectTypes.text))', type='color', list='color-list', 'v-on:input'='color=$event.target.value', id='{{ctrid}}btn-option-color')
+                input.sr-8(v-show='mode=="draw"||mode=="text"||(state=="selected"&&(selectTypes.stroke||selectTypes.text))', type='color', list='color-list', 'v-on:input'='color=$event.target.value', id='ctrid+"btn-option-color"')
                 datalist#color-list
 
                 /// Add Bg Image Button
-                label.mdl-button.mdl-js-button.mdl-button--icon('v-show'='mode=="draw"', for='image-{{ctrid}}', id='{{ctrid}}btn-option-image')
+                label.mdl-button.mdl-js-button.mdl-button--icon('v-show'='mode=="draw"', :for='"image-"+ctrid', :id='ctrid+"btn-option-image"')
                     i.material-icons photo_library
-                    input.fileInput(type="file", name="image", id="image-{{ctrid}}", style="display:none;", 'v-on:change'='insertImage')
+                    input.fileInput(type="file", name="image", 'v-bind:id'="'image-'+ctrid", style="display:none;", 'v-on:change'='insertImage')
 
 
                 //button.mdl-button.mdl-js-button.mdl-button--icon('v-show'='mode=="select" && state!=""', 'v-on:click.stop.prevent'='reselect', ':class'='state=="selecting"?"on":""')
@@ -47,34 +47,34 @@ script#drawpad-template(type='text/x-template')
 
 
             // switch layers
-            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='layer="all"',':class'='layer=="all"?"on":""', id='{{ctrid}}btn-layer-all')
+            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='layer="all"',':class'='layer=="all"?"on":""', :id='ctrid+"btn-layer-all"')
                 i.material-icons layers
-            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='layer="bg"', ':class'='layer=="bg"?"on":""', id='{{ctrid}}btn-layer-bg')
+            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='layer="bg"', ':class'='layer=="bg"?"on":""', :id='ctrid+"btn-layer-bg"')
                 i.material-icons photo
-            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='layer="fg"', ':class'='layer=="fg"?"on":""', id='{{ctrid}}btn-layer-fg')
+            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='layer="fg"', ':class'='layer=="fg"?"on":""', :id='ctrid+"btn-layer-fg"')
                 i.material-icons local_florist
 
 
             /// Undo/Redo Button
-            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='undo()', ':disabled'='!canUndo', id='{{ctrid}}btn-undo')
+            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='undo()', ':disabled'='!canUndo', :id='ctrid+"btn-undo"')
                 i.material-icons undo
-            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='redo()', ':disabled'='!canRedo', id='{{ctrid}}btn-redo')
+            button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='redo()', ':disabled'='!canRedo', :id='ctrid+"btn-redo"')
                 i.material-icons redo
-            //- button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='getImageAndOpenPage()', id='{{ctrid}}btn-save')
+            //- button.mdl-button.mdl-js-button.mdl-button--icon('v-on:click.stop.prevent'='getImageAndOpenPage()', :id='ctrid+"btn-save"')
             //-     i.material-icons photo_camera
 
-            div.mdl-tooltip(for='{{ctrid}}btn-tool-pen') Pen
-            div.mdl-tooltip(for='{{ctrid}}btn-tool-eraser') Eraser
-            div.mdl-tooltip(for='{{ctrid}}btn-tool-select') Selection
-            div.mdl-tooltip(for='{{ctrid}}btn-option-size') Pen size
-            div.mdl-tooltip(for='{{ctrid}}btn-option-color') Pen color
-            div.mdl-tooltip(for='{{ctrid}}btn-option-image') Insert a picture
-            div.mdl-tooltip(for='{{ctrid}}btn-layer-all') Show all layers
-            div.mdl-tooltip(for='{{ctrid}}btn-layer-fg') Show foreground layer
-            div.mdl-tooltip(for='{{ctrid}}btn-layer-bg') Show background layer
-            div.mdl-tooltip(for='{{ctrid}}btn-undo') Undo
-            div.mdl-tooltip(for='{{ctrid}}btn-redo') Redo
-            //- div.mdl-tooltip(for='{{ctrid}}btn-save') Snapshot
+            div.mdl-tooltip(:for='ctrid+"btn-tool-pen"') Pen
+            div.mdl-tooltip(:for='ctrid+"btn-tool-eraser"') Eraser
+            div.mdl-tooltip(:for='ctrid+"btn-tool-select"') Selection
+            div.mdl-tooltip(:for='ctrid+"btn-option-size"') Pen size
+            div.mdl-tooltip(:for='ctrid+"btn-option-color"') Pen color
+            div.mdl-tooltip(:for='ctrid+"btn-option-image"') Insert a picture
+            div.mdl-tooltip(:for='ctrid+"btn-layer-all"') Show all layers
+            div.mdl-tooltip(:for='ctrid+"btn-layer-fg"') Show foreground layer
+            div.mdl-tooltip(:for='ctrid+"btn-layer-bg"') Show background layer
+            div.mdl-tooltip(:for='ctrid+"btn-undo"') Undo
+            div.mdl-tooltip(:for='ctrid+"btn-redo"') Redo
+            //- div.mdl-tooltip(:for='ctrid+"btn-save"') Snapshot
 
         div.canvas-box
 

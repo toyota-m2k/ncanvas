@@ -13,7 +13,7 @@ html
         script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js')
         script(src='https://code.getmdl.io/1.2.1/material.min.js')
         script(src='https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.4.4/dialog-polyfill.min.js')
-        script(src='https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.28/vue.js')
+        script(src='https://unpkg.com/vue')
 
         link(rel='stylesheet', href='https://code.getmdl.io/1.3.0/material.cyan-light_green.min.css')
 
@@ -45,7 +45,7 @@ html
 
             main.mdl-layout__content
                 div.page-content
-                    drawpad('v-ref:drawpad', width='640', height='480')
+                    drawpad(ref='drawpad', width='640', height='480')
                 div.anim-tools
                     button.mdl-button.mdl-js-button.mdl-button--icon('v-show'='state=="first"', 'v-on:click.stop.prevent'='toggleState', id='btn-toggle-state-off')
                         i.material-icons local_movies
@@ -81,7 +81,7 @@ html
                     div.mdl-tooltip(for='btn-complete') Finish!
 
                 div.paint-result
-                    img(v-for='s in images', width='160', height='120', ':src'='s', track-by='$index')
+                    img(v-for='(s,index) in images', width='160', height='120', ':src'='s', v-bind:key='index')
 
     include ../comp/mdlMixin.pug
     include ../comp/drawpad.pug

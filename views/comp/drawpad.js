@@ -23,9 +23,9 @@
 
     Vue.component('drawpad', {
         mixins: [mch.vueMdlMixin],           // update_mdl();
-        el: function () {
-            return '.drawpad';
-        },
+        // el: function () {
+        //     return '.drawpad';
+        // },
         template: '#drawpad-template',
         data: function() {
             return {
@@ -56,53 +56,54 @@
             }
         },
         props: ['ctrid', 'width', 'height'],
-        ready: function() {
-            var self = this;
-            var $el = $(this.$el);
-            this.canvasSize = { 
-                width: this.width || this.canvasSize.width,
-                height: this.height || this.canvasSize.height
-            };
-            this.drawpad = new mch.nCanvas({
-                element: $el.find('.canvas-box'),
-                layerCount: 2,
-                initialLayer: 1,
-                width: this.canvasSize.width,
-                height: this.canvasSize.height,
-                manualCompleteSelection: true,
-                on: {
-                    canRedo: function(f) {
-                        self.canRedo = f;
-                        if(!f) {
-                            self.hideTooltip(this.ctrid + 'btn-redo');
+        mounted: function() {
+            this.$nextTick(function(){
+                var self = this;
+                var $el = $(this.$el);
+                this.canvasSize = { 
+                    width: this.width || this.canvasSize.width,
+                    height: this.height || this.canvasSize.height
+                };
+                this.drawpad = new mch.nCanvas({
+                    element: $el.find('.canvas-box'),
+                    layerCount: 2,
+                    initialLayer: 1,
+                    width: this.canvasSize.width,
+                    height: this.canvasSize.height,
+                    manualCompleteSelection: true,
+                    on: {
+                        canRedo: function(f) {
+                            self.canRedo = f;
+                            if(!f) {
+                                self.hideTooltip(this.ctrid + 'btn-redo');
+                            }
+                        },
+                        canUndo: function(f) {
+                            self.canUndo = f;
+                            if(!f) {
+                                self.hideTooltip(this.ctrid + 'btn-undo');
+                            }
+                        },
+                        modeChanged: function(v) {
+                        },
+                        stateChanged: function(v, types) {
+                            self.state = v;
+                            self.selectTypes = types || {};
                         }
-                    },
-                    canUndo: function(f) {
-                        self.canUndo = f;
-                        if(!f) {
-                            self.hideTooltip(this.ctrid + 'btn-undo');
-                        }
-                    },
-                    modeChanged: function(v) {
-                    },
-                    stateChanged: function(v, types) {
-                        self.state = v;
-                        self.selectTypes = types || {};
                     }
-                }
-            });
-            //this.drawpad.color=this.color;
+                });
+                //this.drawpad.color=this.color;
 
-            // $(this.$el).find('input[type=color]').on('change', function(){
-            //    //console.log(this);
-            //     self.penStyle.backgroundColor=self.drawpad.color=this.value;
-            // });
-            $(this.$el).mchDropTarget({
-                dropped: function(files) {
-                    self.setImage(files, self.layer=='fg' ? 1 : 0);
-                }
+                // $(this.$el).find('input[type=color]').on('change', function(){
+                //    //console.log(this);
+                //     self.penStyle.backgroundColor=self.drawpad.color=this.value;
+                // });
+                $(this.$el).mchDropTarget({
+                    dropped: function(files) {
+                        self.setImage(files, self.layer=='fg' ? 1 : 0);
+                    }
+                });
             });
-            
         },
 
         methods: {
