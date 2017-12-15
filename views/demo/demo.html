@@ -1,0 +1,5082 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>nCanvas Library Demo</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.4.4/dialog-polyfill.min.css">
+    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/1.7.22/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.cyan-light_green.min.css">
+    <style type="text/css">@charset "UTF-8";
+/* Rules for sizing the icon. */
+.material-icons.md-14 {
+  font-size: 14px; }
+
+.material-icons.md-18 {
+  font-size: 18px; }
+
+.material-icons.md-24 {
+  font-size: 24px; }
+
+.material-icons.md-36 {
+  font-size: 36px; }
+
+.material-icons.md-48 {
+  font-size: 48px; }
+
+.sl-8 {
+  margin-left: 8px; }
+
+.sl-16 {
+  margin-left: 16px; }
+
+.sr-8 {
+  margin-right: 8px; }
+
+.sr-16 {
+  margin-right: 16px; }
+
+.st-8 {
+  margin-top: 8px; }
+
+.st-16 {
+  margin-top: 16px; }
+
+.sb-8 {
+  margin-bottom: 8px; }
+
+.sb-16 {
+  margin-bottom: 16px; }
+
+.center-text {
+  text-align: center; }
+
+.hidden {
+  display: none; }
+
+.transparent {
+  opacity: 0; }
+
+.pre-formatted {
+  white-space: pre; }
+
+.flip-h {
+  -webkit-transform: scaleX(-1);
+  -moz-transform: scaleX(-1);
+  -ms-transform: scaleX(-1);
+  -o-transform: scaleX(-1);
+  transform: scaleX(-1); }
+
+.flip-v {
+  -webkit-transform: scaleY(-1);
+  -moz-transform: scaleY(-1);
+  -ms-transform: scaleY(-1);
+  -o-transform: scaleY(-1);
+  transform: scaleY(-1); }
+
+.blur {
+  filter: blur(2px);
+  -ms-filter: blur(2px);
+  -webkit-filter: blur(2px);
+  -moz-filter: blur(2px);
+  -o-filter: blur(2px); }
+
+/**
+ * Copyright 2015 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* ==========  Color Palettes  ========== */
+/* colors.scss */
+div.canvas-box {
+  position: relative;
+  border: solid 1px lightgray;
+  margin: auto;
+  width: 640px;
+  height: 480px; }
+  div.canvas-box canvas {
+    position: absolute;
+    top: 0;
+    left: 0; }
+  div.canvas-box .text-box {
+    position: absolute;
+    width: 100px;
+    top: 100px;
+    left: 100px;
+    display: none;
+    font-size: 14px;
+    line-height: 1.2em;
+    font-family: "Avenir", "Helvetica", "Arial", "Meiryo UI", "メイリオ", "Meiryo", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", sans-serif; }
+
+.rubber-bands {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+  display: none; }
+  .rubber-bands .rb-content {
+    position: absolute;
+    cursor: move;
+    box-sizing: border-box;
+    border: solid 1px rgb(63,81,181); }
+  .rubber-bands .rb-t, .rubber-bands .rb-b {
+    position: absolute;
+    height: 15px;
+    margin-top: -7px;
+    cursor: n-resize;
+    box-sizing: border-box; }
+  .rubber-bands .rb-l, .rubber-bands .rb-r {
+    position: absolute;
+    width: 15px;
+    margin-left: -7px;
+    cursor: e-resize;
+    box-sizing: border-box; }
+  .rubber-bands .knob {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    margin-left: -7px;
+    margin-top: -7px;
+    border: solid 1px gray;
+    background-color: rgb(63,81,181);
+    box-sizing: border-box; }
+  .rubber-bands .knob-l,
+  .rubber-bands .knob-r {
+    cursor: e-resize; }
+  .rubber-bands .knob-t,
+  .rubber-bands .knob-b {
+    cursor: n-resize; }
+  .rubber-bands .knob-rt,
+  .rubber-bands .knob-lb {
+    cursor: ne-resize; }
+  .rubber-bands .knob-lt,
+  .rubber-bands .knob-rb {
+    cursor: nw-resize; }
+
+.drawpad {
+  color: #757575; }
+  .drawpad .drawpad-toolbar {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    padding: 4px 0; }
+    .drawpad .drawpad-toolbar button {
+      margin: 0 4px; }
+    .drawpad .drawpad-toolbar button.on {
+      background-color: rgb(63,81,181);
+      color: white; }
+    .drawpad .drawpad-toolbar .pen-size-box {
+      max-width: 300px; }
+    .drawpad .drawpad-toolbar .spacer-16 {
+      margin-left: 16px; }
+    .drawpad .drawpad-toolbar .spacer {
+      -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+      flex-grow: 1; }
+    .drawpad .drawpad-toolbar .option-box {
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-align-items: center;
+      -ms-flex-align: center;
+      align-items: center;
+      margin-left: 24px; }
+    .drawpad .drawpad-toolbar .pen-sample-box {
+      padding: 2px;
+      width: 50px;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      border: solid 1px lightgray;
+      -webkit-border-radius: 2px;
+      -moz-border-radius: 2px;
+      border-radius: 2px; }
+      .drawpad .drawpad-toolbar .pen-sample-box .pen-sample-outer {
+        width: 28px;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex; }
+      .drawpad .drawpad-toolbar .pen-sample-box .pen-sample {
+        margin: auto; }
+
+div.anim-tools {
+  margin: 0 16px; }
+  div.anim-tools div.mdl-textfield {
+    width: 100px;
+    margin-right: 8px; }
+  div.anim-tools button {
+    margin-right: 8px; }
+  div.anim-tools button.on {
+    background-color: rgb(63,81,181);
+    color: white; }
+
+div.paint-result {
+  margin: 0 8px; }
+  div.paint-result img {
+    border: solid 1px lightgray;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    margin: 2px; }
+
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://code.getmdl.io/1.2.1/material.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.4.4/dialog-polyfill.min.js"></script>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.compatibility.js"></script>
+  </head>
+  <body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header" id="vueRoot">
+      <header class="mdl-layout__header">
+        <div class="mdl-layout__header-row"><span class="mdl-layout-title"></span></div>
+        <div class="mdl-layout-spacer"></div>
+        <!--nav.mdl-navigation.mdl-layout--large-screen-only-->
+        <!--    a.mdl-navigation__link(href="") Link-->
+      </header>
+      <div class="mdl-layout__drawer"><span class="mdl-layout-title"></span>
+        <nav class="mdl-navigation"><a class="mdl-navigation__link" href="">Link</a></nav>
+      </div>
+      <main class="mdl-layout__content">
+        <div class="page-content">
+          <drawpad ref="drawpad" width="640" height="480"></drawpad>
+        </div>
+        <div class="anim-tools">
+          <button class="mdl-button mdl-js-button mdl-button--icon" v-show="state==&quot;first&quot;" v-on:click.stop.prevent="toggleState" id="btn-toggle-state-off"><i class="material-icons">local_movies</i></button>
+          <button class="mdl-button mdl-js-button mdl-button--icon on" v-show="state!=&quot;first&quot;" v-on:click.stop.prevent="toggleState" id="btn-toggle-state-on"><i class="material-icons">local_movies</i></button>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" v-show="state==&quot;first&quot;">
+            <input class="mdl-textfield__input" id="delay" type="text" pattern="-?[0-9]*(.[0-9]+)?" v-model="initialDelay">
+            <label class="mdl-textfield__label" for="initialDelay">Initial Delay (ms)</label><span class="mdl-textfield__error">Input is not a number!</span>
+          </div>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" v-show="state==&quot;first&quot;">
+            <input class="mdl-textfield__input" id="repeat" type="text" pattern="-?[0-9]*(.[0-9]+)?" v-model="repeat">
+            <label class="mdl-textfield__label" for="repeat">Repeat (0:infinite)</label><span class="mdl-textfield__error">Input is not a number!</span>
+          </div>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" v-show="state!=&quot;first&quot;">
+            <input class="mdl-textfield__input" id="delay" type="text" pattern="-?[0-9]*(.[0-9]+)?" v-model="delay">
+            <label class="mdl-textfield__label" for="delay">Delay (ms)</label><span class="mdl-textfield__error">Input is not a number!</span>
+          </div>
+          <button class="mdl-button mdl-js-button mdl-button--icon" v-show="state==&quot;composing&quot;" v-on:click.stop.prevent="addFrame" id="btn-add-frame"><i class="material-icons">add</i></button>
+          <button class="mdl-button mdl-js-button mdl-button--icon" v-show="state==&quot;composing&quot;" v-on:click.stop.prevent="removeFrame" :disabled="frames.length==0" id="btn-remove-frame"><i class="material-icons">remove</i></button>
+          <button class="mdl-button mdl-js-button mdl-button--icon" v-show="state==&quot;composing&quot;" v-on:click.stop.prevent="complete" :disabled="frames.length&lt;2" id="btn-complete"><i class="material-icons">done</i></button>
+          <div class="mdl-tooltip" for="btn-toggle-state-off">Begin!</div>
+          <div class="mdl-tooltip" for="btn-toggle-state-on">Cancel and Reset</div>
+          <div class="mdl-tooltip" for="btn-add-frame">Add Frame</div>
+          <div class="mdl-tooltip" for="btn-remove-frame">Remove Last Frame</div>
+          <div class="mdl-tooltip" for="btn-complete">Finish!</div>
+        </div>
+        <div class="paint-result"><img v-for="(s,index) in images" width="160" height="120" :src="s" v-bind:key="index"></div>
+      </main>
+    </div>
+  </body>
+  <script type="text/javascript">/**
+ * MDL用DOMツリー更新メソッド（各vueインスタンスにmixinして使用）
+ * Created by toyota on 2016/07/29.
+ * Copyright 2016-2017 M.TOYOTA
+ * All rights reserved.
+ */
+'use strict';
+
+window.mch = window.mch || {};
+mch.eventBus = new Vue();
+
+(function(){
+
+    mch.vueMdlMixin = {
+        methods: {
+            upgrade_mdl: function () {
+                this.$nextTick(function () {
+                    componentHandler.upgradeElements(this.$el);
+                    if (this.onUpgradeMdl) {
+                        this.onUpgradeMdl();
+                    }
+                });
+            },
+        }
+    };
+
+})();
+
+  </script>
+  <!--
+  Created by toyota on 2016/11/22.
+  
+  -->
+  <script id="drawpad-template" type="text/x-template">
+    <div class="drawpad">
+      <div class="drawpad-toolbar">
+        <!-- tool button-->
+        <button class="mdl-button mdl-js-button mdl-button--icon" v-on:click.stop.prevent="mode=&quot;draw&quot;" :class="mode==&quot;draw&quot;?&quot;on&quot;:&quot;&quot;" :id="ctrid + &quot;btn-tool-pen&quot;"><i class="material-icons">mode_edit</i></button>
+        <button class="mdl-button mdl-js-button mdl-button--icon" v-on:click.stop.prevent="mode=&quot;erase&quot;" :class="mode==&quot;erase&quot;?&quot;on&quot;:&quot;&quot;" :id="ctrid + &quot;btn-tool-eraser&quot;"><i class="mdi mdi-eraser"></i></button>
+        <button class="mdl-button mdl-js-button mdl-button--icon" v-on:click.stop.prevent="mode=&quot;text&quot;" :class="mode==&quot;text&quot;?&quot;on&quot;:&quot;&quot;" :id="ctrid + &quot;btn-tool-text&quot;"><i class="material-icons">text_fields</i></button>
+        <button class="mdl-button mdl-js-button mdl-button--icon" v-on:click.stop.prevent="mode=&quot;select&quot;" :class="mode==&quot;select&quot;?&quot;on&quot;:&quot;&quot;" :id="ctrid+&quot;btn-tool-select&quot;"><i class="mdi mdi-cursor-default"></i></button>
+        <div class="spacer option-box">
+          <!--/ Pen/Eraser sample-->
+          <div class="pen-sample-box" v-show="mode==&quot;draw&quot;||mode==&quot;erase&quot;" :style="penBoxStyle">
+            <div class="pen-sample-outer">
+              <div class="pen-sample" :style="penStyle"></div>
+            </div><span>{{penSize}}</span>
+          </div>
+          <!--/ Pen/Eraser Size Slider-->
+          <div class="pen-size-box" v-show="mode==&quot;draw&quot;||mode==&quot;erase&quot;||(state==&quot;selected&quot;&amp;&amp;(selectTypes.stroke))" :id="ctrid+&quot;btn-option-size&quot;">
+            <input class="pen-size mdl-slider mdl-js-slider" type="range" min="1" max="24" value="5" v-on:input="penSize=$event.target.value" v-on:change="penSizeChanged()">
+          </div>
+          <!--/ Pen Color-->
+          <input class="sr-8" v-show="mode==&quot;draw&quot;||mode==&quot;text&quot;||(state==&quot;selected&quot;&amp;&amp;(selectTypes.stroke||selectTypes.text))" type="color" list="color-list" v-on:input="color=$event.target.value" id="ctrid+&quot;btn-option-color&quot;">
+          <datalist id="color-list"></datalist>
+          <!--/ Add Bg Image Button-->
+          <label class="mdl-button mdl-js-button mdl-button--icon" v-show="mode==&quot;draw&quot;" :for="&quot;image-&quot;+ctrid" :id="ctrid+&quot;btn-option-image&quot;"><i class="material-icons">photo_library</i>
+            <input class="fileInput" type="file" name="image" v-bind:id="'image-'+ctrid" style="display:none;" v-on:change="insertImage">
+          </label>
+          <!--button.mdl-button.mdl-js-button.mdl-button--icon('v-show'='mode=="select" && state!=""', 'v-on:click.stop.prevent'='reselect', ':class'='state=="selecting"?"on":""')-->
+          <!--    i.mdi.mdi-plus-box-->
+          <!--button.mdl-button.mdl-js-button.mdl-button--icon('v-show'='mode=="select" && state!=""', 'v-on:click.stop.prevent'='unselect', ':class'='state=="unselecting"?"on":""')-->
+          <!--    i.mdi.mdi-minus-box-->
+          <button class="mdl-button mdl-js-button mdl-button--icon" v-show="mode==&quot;select&quot; &amp;&amp; state==&quot;selected&quot;" v-on:click.stop.prevent="deleteItems"><i class="material-icons">delete</i></button>
+        </div>
+        <!-- switch layers-->
+        <button class="mdl-button mdl-js-button mdl-button--icon" v-on:click.stop.prevent="layer=&quot;all&quot;" :class="layer==&quot;all&quot;?&quot;on&quot;:&quot;&quot;" :id="ctrid+&quot;btn-layer-all&quot;"><i class="material-icons">layers</i></button>
+        <button class="mdl-button mdl-js-button mdl-button--icon" v-on:click.stop.prevent="layer=&quot;bg&quot;" :class="layer==&quot;bg&quot;?&quot;on&quot;:&quot;&quot;" :id="ctrid+&quot;btn-layer-bg&quot;"><i class="material-icons">photo</i></button>
+        <button class="mdl-button mdl-js-button mdl-button--icon" v-on:click.stop.prevent="layer=&quot;fg&quot;" :class="layer==&quot;fg&quot;?&quot;on&quot;:&quot;&quot;" :id="ctrid+&quot;btn-layer-fg&quot;"><i class="material-icons">local_florist</i></button>
+        <!--/ Undo/Redo Button-->
+        <button class="mdl-button mdl-js-button mdl-button--icon" v-on:click.stop.prevent="undo()" :disabled="!canUndo" :id="ctrid+&quot;btn-undo&quot;"><i class="material-icons">undo</i></button>
+        <button class="mdl-button mdl-js-button mdl-button--icon" v-on:click.stop.prevent="redo()" :disabled="!canRedo" :id="ctrid+&quot;btn-redo&quot;"><i class="material-icons">redo</i></button>
+        <div class="mdl-tooltip" :for="ctrid+&quot;btn-tool-pen&quot;">Pen</div>
+        <div class="mdl-tooltip" :for="ctrid+&quot;btn-tool-eraser&quot;">Eraser</div>
+        <div class="mdl-tooltip" :for="ctrid+&quot;btn-tool-select&quot;">Selection</div>
+        <div class="mdl-tooltip" :for="ctrid+&quot;btn-option-size&quot;">Pen size</div>
+        <div class="mdl-tooltip" :for="ctrid+&quot;btn-option-color&quot;">Pen color</div>
+        <div class="mdl-tooltip" :for="ctrid+&quot;btn-option-image&quot;">Insert a picture</div>
+        <div class="mdl-tooltip" :for="ctrid+&quot;btn-layer-all&quot;">Show all layers</div>
+        <div class="mdl-tooltip" :for="ctrid+&quot;btn-layer-fg&quot;">Show foreground layer</div>
+        <div class="mdl-tooltip" :for="ctrid+&quot;btn-layer-bg&quot;">Show background layer</div>
+        <div class="mdl-tooltip" :for="ctrid+&quot;btn-undo&quot;">Undo</div>
+        <div class="mdl-tooltip" :for="ctrid+&quot;btn-redo&quot;">Redo</div>
+      </div>
+      <div class="canvas-box"></div>
+    </div>
+  </script>
+  <script type="text/javascript">
+    /**
+ * RubberBand
+ *
+ * Usege
+ *
+ *  // 初期化
+ *  var rb = new RubberBand($container);
+ *
+ *  // ラバーバンドの位置・サイズを指定
+ *  rb.setRect(rect);
+ *
+ *  // ラバーバンドの縦横比を指定（optional: keepAspect(true)の場合のみ使用）
+ *  rb.setAspect(width/height)
+ *
+ *  // ラバーバンドの移動可能範囲を指定（optional, but recommended)
+ *  rb.setBoundary(rect)
+ *
+ *  // ラバーバンド移動・リサイズ中のコールバック
+ *  rb.onmoving = function(rb) {
+ *      // moving or resizing from rb.orgRect to rb.rect.
+ *      // callback frequently while dragging.
+ *
+ *  };
+ *  // ラバーバンド移動・リサイズ完了時のコールバック
+ *  rb.onmoved = function(rb) {
+ *      // moved or resized from  rb.orgRect to rb.rect.
+ *      // callback once.
+ *  };
+ *
+ *  // ラバーバンドを表示
+ *  rb.show();
+ *
+ *  // ラバーバンドを非表示化
+ *  rb.hide();
+ *
+ *  // ラバーバンドは表示中？
+ *  if(rb.isShown()) {
+ *      ...
+ *  }
+ *
+ *
+ *  // 縦横比を維持するかどうかを指定
+ *  //  flag == "keepCurrent"       現在のrectの比率を維持
+ *  //          "keepSetting",      setAspect()で指定された比率を維持
+ *  //          "free"              維持しない
+ *  keepAspect(flag);
+ *
+ * Created by toyota on 2016/11/28.
+ * Copyright 2016 M.TOYOTA
+ * All rights reserved.
+ */
+(function($) {
+    'use strict';
+
+    // 移動リサイズ操作
+    function Transformer(from, to, margin) {
+        if(from && to) {
+            this.set(from, to, margin);
+        } else if(from) {
+            this.copyFrom(from);
+        }
+    }
+    Transformer.prototype._len = function(l) {
+        return l || 1;
+    };
+    Transformer.prototype._ratio = function(t,f) {
+        return this._len(t)/this._len(f);
+    };
+    Transformer.prototype.set = function(from, to, margin) {
+        margin = margin || 0;
+        this.org = {
+            x: from.left+margin/2,
+            y: from.top+margin/2
+        };
+        this.translate = {
+            x: to.left - from.left,
+            y: to.top - from.top
+        };
+        this.ratio = {
+            x: this._ratio(to.width()-margin, from.width()-margin),
+            y: this._ratio(to.height()-margin, from.height()-margin)
+        };
+        return this;
+    };
+
+    Transformer.prototype.copyFrom = function(s) {
+        this.org = {x:s.org.x, y:s.org.y};
+        this.translate = {x:s.translate.x, y:s.translate.y};
+        this.ratio = {x:s.ratio.x, y:s.ratio.y};
+        return this;
+    };
+
+
+    Transformer.prototype.x = function(x) {
+        return (x-this.org.x)*this.ratio.x + this.org.x + this.translate.x;
+    };
+    Transformer.prototype.y = function(y) {
+        return (y-this.org.y)*this.ratio.y + this.org.y + this.translate.y;
+    };
+    Transformer.prototype.rect = function(r) {
+        r.left = this.x(r.left);
+        r.right = this.x(r.right);
+        r.top = this.y(r.top);
+        r.bottom = this.y(r.bottom);
+        return r;
+    };
+    Transformer.prototype.point = function(p) {
+        p.x = this.x(p.x);
+        p.y = this.y(p.y);
+        return p;
+    };
+
+    function Point(x, y) {
+        this.x = x || 0;
+        this.y = y || 0;
+    }
+
+
+    function Rect(left, top, right, bottom) {
+        if (typeof left === 'object') {
+            this.copyFrom(left);
+        } else {
+            this.left = left || 0;
+            this.top = top || 0;
+            this.right = (null==right) ? this.left : right;
+            this.bottom = (null==bottom) ? this.top : bottom;
+            this.normalize();
+        }
+    }
+
+    Rect.prototype.ix = function() {
+        return Math.round(this.left);
+    };
+    Rect.prototype.iy = function() {
+        return Math.round(this.top);
+    };
+    Rect.prototype.ih = function() {
+        return Math.round(this.height());
+    };
+    Rect.prototype.iw = function() {
+        return Math.round(this.width());
+    };
+    
+    Rect.prototype.clone = function() {
+        return new Rect(this);
+    };
+
+    Rect.prototype.set = function (left, top, right, bottom) {
+        this.left = left || 0;
+        this.top = top || 0;
+        this.right = (null==right) ? this.left : right;
+        this.bottom = (null==bottom) ? this.top : bottom;
+        this.normalize();
+        return this;
+    };
+
+    Rect.prototype.copyFrom = function (src) {
+        this.left = src.left;
+        this.top = src.top;
+        this.bottom = src.bottom;
+        this.right = src.right;
+    };
+
+    Rect.prototype.setLeftTop = function (x, y) {
+        this.left = x;
+        this.top = y;
+        return this;
+    };
+
+    Rect.prototype.setRightTop = function (x, y) {
+        this.right = x;
+        this.top = y;
+        return this;
+    };
+
+    Rect.prototype.setLeftBottom = function (x, y) {
+        this.left = x;
+        this.bottom = y;
+        return this;
+    };
+
+    Rect.prototype.setRightBottom = function (x, y) {
+        this.right = x;
+        this.bottom = y;
+        return this;
+    };
+
+    Rect.prototype.moveTop = function(y) {
+        var dy = y - this.top;
+        this.top = y;
+        this.bottom += dy;
+        return this;
+    };
+    Rect.prototype.moveLeft = function (x) {
+        var dx = x - this.left;
+        this.left = x;
+        this.right += dx;
+        return this;
+    };
+    Rect.prototype.moveBottom = function(y) {
+        var dy = y - this.bottom;
+        this.bottom = y;
+        this.top += dy;
+        return this;
+    };
+    Rect.prototype.moveRight = function(x) {
+        var dx = x - this.right;
+        this.right = x;
+        this.left += dx;
+        return this;
+    };
+
+    Rect.prototype.moveLeftTop = function (x, y) {
+        this.moveLeft(x).moveTop(y);
+        return this;
+    };
+    Rect.prototype.moveRightBottom = function (x, y) {
+        this.moveRight(x).moveBottom(y);
+        return this;
+    };
+
+    Rect.prototype.newPoint = function(x,y) {
+        this.left = this.right = x;
+        this.top = this.bottom = y;
+        return this;
+    };
+        
+    Rect.prototype.addPoint = function(x,y) {
+        if(x<this.left) {
+            this.left = x;
+        } else if(x>this.right) {
+            this.right = x;
+        }
+        if(y<this.top) {
+            this.top = y;
+        } else if(y>this.bottom) {
+            this.bottom = y;
+        }
+        return this;
+    };
+    
+    Rect.prototype.inflate = function(v) {
+        this.left-=v;
+        this.right+=v;
+        this.top-=v;
+        this.bottom+=v;
+        return this;
+    };
+    
+    Rect.prototype.hitTest = function(point) {
+        return this.left<point.x && point.x<this.right
+            && this.top<point.y && point.y<this.bottom;
+    };
+
+    Rect.prototype._lineIntersect = function(ax, ay, bx, by, cx, cy, dx, dy) {
+        var ta = (cx - dx) * (ay - cy) + (cy - dy) * (cx - ax);
+        var tb = (cx - dx) * (by - cy) + (cy - dy) * (cx - bx);
+        var tc = (ax - bx) * (cy - ay) + (ay - by) * (ax - cx);
+        var td = (ax - bx) * (dy - ay) + (ay - by) * (ax - dx);
+        return tc * td < 0 && ta * tb < 0;
+    };
+
+    Rect.prototype.intersectTest = function(p1, p2) {
+        return this.hitTest(p1) 
+            || this.hitTest(p2)
+            || this._lineIntersect(this.left, this.top, this.right, this.bottom, p1.x, p1.y, p2.x, p2.y)
+            || this._lineIntersect(this.left, this.bottom, this.right, this.top, p1.x, p1.y, p2.x, p2.y);
+    };
+    
+    Rect.prototype.unionRect = function(r) {
+        if(this.left>r.left) {
+            this.left = r.left;
+        }
+        if(this.right<r.right) {
+            this.right = r.right;
+        }
+        if(this.top>r.top) {
+            this.top = r.top;
+        }
+        if(this.bottom<r.bottom) {
+            this.bottom = r.bottom;
+        }
+    };
+    
+    Rect.prototype.equals = function(r) {
+        return r.left == this.left 
+            && r.top == this.top
+            && r.right == this.right
+            && r.bottom == this.bottom;
+    };
+
+    // Rect.prototype.limitTop = function (y) {
+    //     return (y > this.bottom) ? this.bottom : y;
+    // };
+    //
+    // Rect.prototype.limitBottom = function (y) {
+    //     return (y < this.top) ? this.top : y;
+    // };
+    // Rect.prototype.limitLeft = function (x) {
+    //     return (x > this.right) ? this.right : x;
+    // };
+    // Rect.prototype.limitRight = function (x) {
+    //     return (x < this.left) ? this.left : x;
+    // };
+    // Rect.prototype.limitSetTop = function (y) {
+    //     this.top = this.limitTop(y);
+    // };
+    // Rect.prototype.limitSetBottom = function (y) {
+    //     this.bottom = this.limitBottom(y);
+    // };
+    // Rect.prototype.limitSetLeft = function (x) {
+    //     this.left = this.limitLeft(x);
+    // };
+    // Rect.prototype.limitSetRight = function (x) {
+    //     this.right = this.limitRight(x);
+    // };
+
+    Rect.prototype.normalize = function () {
+        if (this.left > this.right) {
+            var h = this.right;
+            this.right = this.left;
+            this.left = h;
+        }
+        if (this.top > this.bottom) {
+            var v = this.bottom;
+            this.bottom = this.top;
+            this.top = v;
+        }
+        return this;
+    };
+
+    Rect.prototype.width = function () {
+        return this.right - this.left;
+    };
+
+    Rect.prototype.height = function () {
+        return this.bottom - this.top;
+    };
+
+    function RubberBand(root) {
+        for (var key in this.constructor.prototype) {
+            this[key] = this[key].bind(this);
+        }
+
+        this.box = $('<div class="rubber-bands">').css('display', 'none');
+        this.l = $('<div class="rb rb-l">');
+        this.t = $('<div class="rb rb-t">');
+        this.r = $('<div class="rb rb-r">');
+        this.b = $('<div class="rb rb-b">');
+        this.lt = $('<div class="knob knob-lt">');
+        this.rt = $('<div class="knob knob-rt">');
+        this.lb = $('<div class="knob knob-lb">');
+        this.rb = $('<div class="knob knob-rb">');
+        this.ml = $('<div class="knob knob-l">');
+        this.mr = $('<div class="knob knob-r">');
+        this.mt = $('<div class="knob knob-t">');
+        this.mb = $('<div class="knob knob-b">');
+        this.c = $('<div class="rb-content">');
+
+        root.append(this.box
+                .append(this.mt)
+                .append(this.ml)
+                .append(this.mr)
+                .append(this.mb)
+                .append(this.c)
+                .append(this.l)
+                .append(this.t)
+                .append(this.r)
+                .append(this.b)
+                .append(this.lt)
+                .append(this.rt)
+                .append(this.lb)
+                .append(this.rb)
+                );
+
+        this.rect = new Rect();
+        this.orgRect = new Rect();
+        this.target = null;
+        //this.keepAspect = false;
+        this.aspect = 0;
+        this.aspectSetting = 0;
+
+        this.l[0].addEventListener('mousedown', this._mouseDown);
+        this.l[0].addEventListener('touchstart', this._mouseDown);
+        this.l.data('rb', {x: 'min'});
+
+        this.r[0].addEventListener('mousedown', this._mouseDown);
+        this.r[0].addEventListener('touchstart', this._mouseDown);
+        this.r.data('rb', {x: 'max'});
+
+        this.t[0].addEventListener('mousedown', this._mouseDown);
+        this.t[0].addEventListener('touchstart', this._mouseDown);
+        this.t.data('rb', {y: 'min'});
+
+        this.b[0].addEventListener('mousedown', this._mouseDown);
+        this.b[0].addEventListener('touchstart', this._mouseDown);
+        this.b.data('rb', {y: 'max'});
+
+        this.lt[0].addEventListener('mousedown', this._mouseDown);
+        this.lt[0].addEventListener('touchstart', this._mouseDown);
+        this.lt.data('rb', {x: 'min', y: 'min'});
+
+        this.lb[0].addEventListener('mousedown', this._mouseDown);
+        this.lb[0].addEventListener('touchstart', this._mouseDown);
+        this.lb.data('rb', {x: 'min', y: 'max'});
+
+        this.rt[0].addEventListener('mousedown', this._mouseDown);
+        this.rt[0].addEventListener('touchstart', this._mouseDown);
+        this.rt.data('rb', {x: 'max', y: 'min'});
+
+        this.rb[0].addEventListener('mousedown', this._mouseDown);
+        this.rb[0].addEventListener('touchstart', this._mouseDown);
+        this.rb.data('rb', {x: 'max', y: 'max'});
+
+        this.c[0].addEventListener('mousedown', this._mouseDown);
+        this.c[0].addEventListener('touchstart', this._mouseDown);
+        this.c.data('rb', {c:true});
+    }
+
+    RubberBand.prototype._mouseDown = function (event) {
+        console.log('rubber band mouse down.');
+        this.target = null;
+        var $t = $(event.target);
+        var p = $t.data('rb');
+        if (!p) {
+            return;
+        }
+
+        event.preventDefault();
+        this.target = $t;
+        this.dragging = false;
+
+        this.touch = false;
+        if (event.type === "touchstart") {
+            event = event.changedTouches[0];
+            this.touch = true;
+        }
+        this.org = {
+            x: event.pageX - this.target[0].offsetLeft,
+            y: event.pageY - this.target[0].offsetTop
+        };
+        console.log('mouse down at x=' + this.org.x + ', y=' + this.org.y);
+
+        if (!this.touch) {
+            document.body.addEventListener('mousemove', this._mouseMove, false);
+            document.body.addEventListener('mouseup', this._mouseUp, false);
+        } else {
+            document.body.addEventListener('touchmove', this._mouseMove, false);
+            document.body.addEventListener('touchend', this._mouseUp, false);
+        }
+
+        // this.target.css('background-color', 'blue');
+    };
+
+    var DRAG_THRESHOLD = 5;
+    var MIN_LEDGE = 4;
+
+    RubberBand.prototype._resizeX = function (x, hint) {
+        if(!hint) {
+            return x;
+        }
+        if(hint=='min') {
+            // left
+            if(x>this.rect.right-MIN_LEDGE) {
+                x = this.rect.right-MIN_LEDGE;
+            }
+            if(this.boundary) {
+                if (this.boundary && x > this.boundary.right - MIN_LEDGE) {
+                    x = this.boundary.right - MIN_LEDGE;
+                }
+            }
+            this.rect.left = x;
+        } else {
+            // right
+            if(x<this.rect.left+MIN_LEDGE) {
+                x = this.rect.left+MIN_LEDGE;
+            }
+            if(this.boundary) {
+                if (this.boundary && x < this.boundary.left + MIN_LEDGE) {
+                    x = this.boundary.left + MIN_LEDGE;
+                }
+            }
+            this.rect.right = x;
+        }
+        return x;
+    };
+
+    RubberBand.prototype._resizeY = function (y, hint) {
+        if(!hint) {
+            return null;
+        }
+        if(hint=='min') {
+            // top
+            if(y>this.rect.bottom-MIN_LEDGE) {
+                y = this.rect.bottom-MIN_LEDGE;
+            }
+            if(this.boundary) {
+                if (this.boundary && y > this.boundary.bottom - MIN_LEDGE) {
+                    y = this.boundary.bottom - MIN_LEDGE;
+                }
+            }
+            this.rect.top = y;
+        } else {
+            // bottom
+            if(y<this.rect.top+MIN_LEDGE) {
+                y = this.rect.top+MIN_LEDGE;
+            }
+            if(this.boundary) {
+                if (this.boundary && y < this.boundary.top + MIN_LEDGE) {
+                    y = this.boundary.top + MIN_LEDGE;
+                }
+            }
+            this.rect.bottom = y;
+        }
+        return y;
+    };
+
+    RubberBand.prototype._applyAspect = function(hintX, hintY) {
+        if(this.aspect) {
+            // knob
+            var h = this.rect.height(), w = this.rect.width();
+            if (hintX && hintY) {
+                if(w<h) {
+                    w = h* this.aspect;
+                } else {
+                    h = w/this.aspect;
+                }
+                if(hintX=='min') {
+                    // left
+                    this.rect.left = this.rect.right - w;
+                    if(this.boundary) {
+                        if (this.rect.left > this.boundary.right - MIN_LEDGE) {
+                            this.rect.moveLeft(this.boundary.right - MIN_LEDGE)
+                        }
+                    }
+                } else {
+                    this.rect.right = this.rect.left + w;
+                    if(this.boundary) {
+                        if (this.rect.right < this.boundary.left + MIN_LEDGE) {
+                            this.rect.moveRight(this.boundary.left + MIN_LEDGE)
+                        }
+                    }
+                }
+
+                if(hintY=='min') {
+                    // left
+                    this.rect.top = this.rect.bottom - h;
+                    if(this.boundary) {
+                        if (this.rect.top > this.boundary.bottom - MIN_LEDGE) {
+                            this.rect.moveTop(this.boundary.bottom - MIN_LEDGE)
+                        }
+                    }
+                } else {
+                    this.rect.bottom = this.rect.top + w;
+                    if(this.boundary) {
+                        if (this.rect.bottom < this.boundary.top + MIN_LEDGE) {
+                            this.rect.moveBottom(this.boundary.top + MIN_LEDGE)
+                        }
+                    }
+                }
+            } else if (hintX) {
+                // left/right
+                h = w / this.aspect;
+                this.rect.bottom = this.rect.top + h;
+                if(this.boundary) {
+                    if (this.rect.bottom < this.boundary.top + MIN_LEDGE) {
+                        this.rect.moveBottom(this.boundary.top+MIN_LEDGE);
+                    }
+                }
+            } else if (hintY) {
+                // top/bottom
+                w = h * this.aspect;
+                this.rect.right = this.rect.left + w;
+                if(this.boundary) {
+                    if (this.rect.right < this.boundary.left + MIN_LEDGE) {
+                        this.rect.moveRight(this.boundary.left+MIN_LEDGE);
+                    }
+                }
+            }
+        }
+    };
+
+    RubberBand.prototype._moveContent = function(x,y) {
+        this.rect.moveLeftTop(x,y);
+        if(this.boundary) {
+            if (this.rect.right < this.boundary.left+MIN_LEDGE) {
+                this.rect.moveRight(this.boundary.left+MIN_LEDGE);
+            } else if (this.rect.left > this.boundary.right-MIN_LEDGE) {
+                this.rect.moveLeft(this.boundary.right-MIN_LEDGE);
+            }
+            if (this.rect.bottom < this.boundary.top+MIN_LEDGE) {
+                this.rect.moveBottom(this.boundary.top+MIN_LEDGE);
+            } else if (this.rect.top > this.boundary.bottom-MIN_LEDGE) {
+                this.rect.moveTop(this.boundary.bottom-MIN_LEDGE);
+            }
+        }
+    };
+
+    RubberBand.prototype._mouseMove = function (event) {
+        if (this.target) {
+            event.preventDefault();
+            if (event.type === "touchmove") {
+                event = event.changedTouches[0];
+            }
+
+            var p = this.target.data('rb');
+            var x = event.pageX - this.org.x;
+            var y = event.pageY - this.org.y;
+
+            if(p.x||p.y) {
+                // resizing
+                this._resizeX(x, p.x);
+                this._resizeY(y, p.y);
+                this._applyAspect(p.x, p.y);
+            } else {
+                // moving
+                if(!this.dragging) {
+                    if(Math.abs(x- this.target[0].offsetLeft)<DRAG_THRESHOLD && Math.abs(y-this.target[0].offsetTop)<DRAG_THRESHOLD) {
+                        return;
+                    } else {
+                        this.dragging = true;
+                    }
+                }
+                this._moveContent(x,y);
+            }
+
+            
+            // this.target[0].style.top =  x + "px";
+            // this.target[0].style.left = y + "px";
+            this.updatePosition();
+            if(this.onmoving) {
+                this.onmoving(this);
+            }
+            console.log('mouse moving at x=' + x + ', y=' + y);
+        }
+    };
+
+    RubberBand.prototype._mouseUp = function (event) {
+        event.preventDefault();
+        console.log('mouse up or canceled');
+        if(!this.touch) {
+            document.body.removeEventListener('mousemove', this._mouseMove);
+            document.body.removeEventListener('mouseup', this._mouseUp);
+        } else {
+            document.body.removeEventListener('touchmove', this._mouseMove);
+            document.body.removeEventListener('touchend', this._mouseUp);
+        }
+
+        var p = this.target.data('rb');
+        this.target = null;
+        if(p.c && !this.dragging) {
+            console.log('mouse clicked inside rubber band.');
+            if(this.onclicked) {
+                this.onclicked(this, event);
+            }
+        } else {
+            console.log('mouse moved.');
+            if(this.onmoved) {
+                this.onmoved(this);
+            }
+        }
+
+        // this.target.css('background-color', 'red');
+        // document.body.removeEventListener('mouseout', this._mouseUp);
+
+    };
+
+
+    RubberBand.prototype.show = function () {
+        this.box.css('display', 'block');
+    };
+    RubberBand.prototype.hide = function () {
+        this.box.css('display', 'none');
+    };
+    RubberBand.prototype.isShown = function() {
+        return this.box.css('display') != 'none';
+    };
+
+    RubberBand.prototype.setRect = function (rect) {
+        if (this.rect) {
+            this.rect.copyFrom(rect);
+            this.orgRect.copyFrom(rect);
+            this.updatePosition();
+        }
+    };
+
+    // aspect = width/height;
+    RubberBand.prototype.setAspect = function (aspect) {
+        this.aspectSetting = aspect;
+    };
+
+    RubberBand.prototype.keepAspect = function(flag) {
+        switch(flag) {
+            case 'keepSetting':
+                if(this.aspectSetting) {
+                    this.aspect = this.aspectSetting;
+                    this._applyAspect('max', 'max');
+                    break;
+                }
+                // fall through ...
+            case 'keepCurrent':
+                if(this.rect.width() && this.rect.height()) {
+                    this.aspect = this.rect.width() / this.rect.height();
+                    this._applyAspect('max', 'max');
+                    break;
+                }
+                // fall through ...
+            case 'free':
+                this.aspect = 0;
+                break;
+            default:
+                break;
+        }
+        return this.aspect;
+    };
+
+    RubberBand.prototype.setBoundary = function (x,y,width, height) {
+        this.boundary = new Rect(x,y,x+width,y+height);
+    };
+
+    RubberBand.prototype.updatePosition = function () {
+        if (this.rect) {
+            var margin = 4;
+            var top = this.rect.top - margin;
+            var left = this.rect.left - margin;
+            var width = this.rect.width() + margin*2;
+            var height = this.rect.height() + margin*2;
+            var right = left + width;
+            var bottom = top + height;
+
+            this.c.css('left', left).css('top', top).css('width', width).css('height', height);
+
+            this.l.css('left', left).css('top', top).css('height', height);
+            this.r.css('left', right).css('top', top).css('height', height);
+            this.t.css('left', left).css('top', top).css('width', width);
+            this.b.css('left', left).css('top', bottom).css('width', width);
+
+            this.lt.css('left', left).css('top', top);
+            this.rt.css('left', right).css('top', top);
+            this.lb.css('left', left).css('top', bottom);
+            this.rb.css('left', right).css('top', bottom);
+
+            var mv = (top+bottom)/2;
+            var mh = (left+right)/2;
+            this.ml.css('left', left).css('top', mv);
+            this.mr.css('left', right).css('top', mv);
+            this.mt.css('left', mh).css('top', top);
+            this.mb.css('left', mh).css('top', bottom);
+        }
+    };
+
+    window.mch = window.mch || {};
+    mch.rb = {
+        Point: Point,
+        Rect: Rect,
+        RubberBand: RubberBand,
+        Transformer: Transformer
+    };
+
+})(jQuery);//  nCanvas.js
+//
+//  Multi-Layered Drawing Canvas
+//
+//  - supports multi object types (Pen/Eraser/Text/Picture)
+//  - selectable objects: movable, resizable, removable.
+//  - unlimited undo/redo
+//  - smoothing lines
+//  - serialize and deserialize to/from JSON format
+//
+//    Copyright (C) 2016-2017  M.TOYOTA  All rights reserved.
+//
+
+(function($) {
+
+  // 外部参照
+  var RubberBand = window.mch.rb.RubberBand;
+  var Rect = window.mch.rb.Rect;
+  var Point = window.mch.rb.Point;
+  var Transformer = window.mch.rb.Transformer;
+  var TEXTBOX_INIT_WIDTH = 200;
+  var TEXTBOX_INIT_HEIGHT = 24;
+  var TEXTBOX_MAX_WIDTH = 300;
+  var TEXTBOX_MAX_HEIGHT = 250;
+
+  /**
+   * nCanvasクラス
+   * @param config
+   *          element: キャンバスのコンテナ(div)
+   *          layerCount: レイヤー数
+   *          initialLayer: 初期状態で選択されている（描画対象となる）レイヤー番号(0 - )
+   *          readOnly: true: リードオンリー
+   *          width: キャンバスの幅(px)
+   *          height: キャンバスの高さ(px)
+   *          color: 初期ペンカラー
+   *          penSize: 初期ペンサイズ
+   *          on {
+   *            canUndo: undo可能かどうかが変化したときのコールバック
+   *            canRedo: redo可能かどうかが変化したときのコールバック
+   *            modeChanged: モード(draw/erase/select)が変更されたときのコールバック
+   *          }
+   *
+   * @constructor
+   */
+  function nCanvas(config) {
+    // thisポインタを固定
+    for (var key in this.constructor.prototype) {
+      this[key] = this[key].bind(this);
+    }
+
+    // キャンバスをホストするDOMエレメントの指定は必須。
+    if (!config.hasOwnProperty('element')) {
+      console.error('nCanvas error: No element selected');
+      return;
+    }
+
+    if (typeof(config.element) === 'string') {
+      this.root = $(config.element);
+    } else {
+      this.root = config.element;
+    }
+
+    var layerCount = (config.layerCount || 1)+1;    // + overlay layer
+    this.layers = [];
+    this._activeLayers = [];
+    for (var i = 0; i < layerCount; i++) {
+      var c = $('<canvas class="ncanvas-canvas">');
+      this.root.append(c);
+      this.layers.push({element: c});
+      this._activeLayers.push(true);
+    }
+    this._overlay = layerCount-1;
+    // this.layers[this._overlay].element[0].addEventListener('paste', function(event){
+    //   console.log('paste event received.');
+    // },false);
+
+    this.eventTarget = this.layers[this._overlay].element[0];
+    this.readOnly = config.readOnly || this.root.attr('data-readOnly') || false;
+    if (!this.readOnly) {
+      $(this.eventTarget).css({cursor: 'crosshair'});
+    }
+
+    this.elText = $('<textarea class="text-box">');
+    this.root.append(this.elText);
+
+    this.rb = new RubberBand(this.root);
+    this.rb.onmoving = this._onRubberBandMoving;
+    this.rb.onmoved = this._onRubberBandMoved;
+    this.rb.onclicked = this._onRubberBandClicked;
+
+    // Width can be defined on the HTML or programatically
+    this._width = config.width || this.root.attr('data-width') || 0;
+    this._height = config.height || this.root.attr('data-height') || 0;
+
+    // Pen attributes
+    this.color = config.color || this.root.attr('data-color') || '#000000';
+    this.penSize = config.penSize || this.root.attr('data-penSize') || 5;
+    this.erase = false;   // true: eraser / false:pen    appended on 2016.11.22 by M.TOYOTA
+    this.currentLayer = config.initialLayer || 0;
+    this.on = config.on || {};
+
+    // ReadOnly nCanvass may not be modified
+
+    // Stroke control variables
+    this.drawables = config.drawables || [];
+    this._currentStroke = {
+      type: 'stroke',
+      alive: true,
+      color: null,
+      size: null,
+      erase: false,
+      layer: 0,
+      rect: null,
+      lines: []
+    };
+
+    this._selection = null;
+    this._mode = 'draw';     // draw / select
+    this._state = '';       // selecting, selected,
+
+    //
+    // Table. Combination of Mode & State
+    //
+    // mode         state         transition trigger      description
+    // ------------ ------------- ----------------------- --------------------------------------------------------------
+    // draw         ''            setMode(draw)           通常のペン描画モード
+    //              selected      addImage()              image挿入中のラバーバンド表示
+    // erase        ''            setMode(erase)          消しゴムモード
+    // select       ''            setMode(select)         選択待ち（mousedownで選択開始、ドラッグで追加選択、mouseupで選択確定）
+    //              selected      [multiple]              選択完了（１つ以上のオブジェクトを選択している）
+    //              selecting     restartSelection(false) 再選択中（タップで追加選択：completeSelection呼び出しまで状態維持）
+    //              deselecting   restartSelection(true)  選択解除中（タップで選択解除：completeSelection呼び出しまで状態維持）
+    //
+
+    this._transformer = new Transformer();    // working transformer
+
+    // Undo History
+    this.undoHistory = config.undoHistory || [];
+    this.curHistory = config.curHistory || 0;
+
+    // Animation function calls
+    // this.animateIds = [];
+
+    // Set sketching state
+    this._sketching = false;
+
+    // Setup canvas sketching listeners
+    this._initCanvas();
+  }
+
+  /**
+   * nCanvas用に追加されたDOM要素を削除する
+   */
+  nCanvas.prototype.destroy = function() {
+    this.root.empty();
+
+    // これ以降の操作をエラーにするため、主要なメンバーをクリアしておく
+    delete this.layers;
+    delete this.drawables;
+    delete this.undoHistory;
+    delete this._currentStroke;
+  };
+
+  //
+  // Private API
+  //
+
+  /**
+   * キャンバス廻りの初期化
+   *
+   * @private
+   */
+  nCanvas.prototype._initCanvas = function () {
+    // Set attributes
+    for(var i=0 ; i<this.layers.length ; i++) {
+      var layer = this.layers[i];
+      layer.canvas = layer.element[0];
+      layer.canvas.width = this._width;
+      layer.canvas.height = this._height;
+      layer.context = layer.canvas.getContext('2d');
+    }
+
+    this.root.css('width', this._width);
+    this.root.css('height', this._height);
+    this.rb.setBoundary(0,0,this._width, this._height);
+
+    // Setup event listeners
+    this._redraw();
+
+    if (this.readOnly) {
+      return;
+    }
+
+    // Mouse
+    this.eventTarget.addEventListener('mousedown', this._mouseDown);
+    // Touch
+    this.eventTarget.addEventListener('touchstart', this._mouseDown);
+  };
+
+
+  /**
+   * eventオブジェクトからマウス/タップ位置を取得する
+   * @param event イベントオブジェクト
+   * @returns {{x: number, y: number}}　マウス/タップ座標
+   * @private
+   */
+  nCanvas.prototype._cursorPosition = function (event) {
+    if (event.type === 'touchstart'||event.type=='touchmove') {
+      event = event.changedTouches[0];
+    }
+    
+    return {
+      x: event.pageX - $(this.eventTarget).offset().left,
+      y: event.pageY - $(this.eventTarget).offset().top
+    };
+  };
+
+  var IdenticalTransformer = {
+    x: function(x) { return x;},
+    y: function(y) { return y;}
+  };
+
+  /**
+   * ストロークを直線で描画する
+   *
+   * @param layerInfo     描画先レイヤー
+   * @param obj         描画オブジェクト
+   * @private
+   */
+  nCanvas.prototype._drawStrokesWithLine = function (layerInfo, obj) {
+    if(!obj.points.length) {
+      return;
+    }
+
+    var ctx = layerInfo.context;
+
+    ctx.save();
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = obj.color;
+    ctx.lineWidth = obj.size;
+    ctx.globalCompositeOperation = obj.erase ? 'destination-out' : 'source-over';
+    ctx.beginPath();
+
+    var transformer = obj.transformer || IdenticalTransformer;
+    var x, y, point;
+
+    // 始点
+    point = obj.points[0];
+    x = transformer.x(point.x);
+    y = transformer.y(point.y);
+    ctx.moveTo(x,y);
+
+    // 以降、順次lineTo
+    if(obj.points.length==1) {
+      ctx.lineTo(x,y);
+    } else {
+      for(var i=1, ci=obj.points.length ; i<ci ; i++) {
+        point = obj.points[i];
+        x = transformer.x(point.x);
+        y = transformer.y(point.y);
+        ctx.lineTo(x,y);
+      }
+    }
+
+    ctx.stroke();
+    ctx.restore();
+  };
+
+  /**
+   * ストロークをベジエ曲線で描画する
+   *
+   * @param layerInfo     描画先レイヤー
+   * @param obj         描画オブジェクト
+   * @private
+   */
+  nCanvas.prototype._drawStrokes = function (layerInfo, obj) {
+    if(!obj.points.length) {
+      return;
+    }
+    if(obj.points.length<3) {
+      return this._drawStrokesWithLine(layerInfo, obj);
+    }
+    var ctx = layerInfo.context;
+    var transformer = obj.transformer || IdenticalTransformer;
+    var x, y, points = obj.points;
+
+    ctx.save();
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = obj.color;
+    ctx.lineWidth = obj.size;
+    ctx.globalCompositeOperation = obj.erase ? 'destination-out' : 'source-over';
+    ctx.beginPath();
+
+    // 始点
+    x = transformer.x(points[0].x);
+    y = transformer.y(points[0].y);
+    ctx.moveTo(x,y);
+
+
+    for (var i = 1; i < points.length - 2; i ++) {
+      var xc = transformer.x((points[i].x + points[i + 1].x) / 2);
+      var yc = transformer.y((points[i].y + points[i + 1].y) / 2);
+      ctx.quadraticCurveTo(transformer.x(points[i].x), transformer.y(points[i].y), xc, yc);
+    }
+    // curve through the last two points
+    ctx.quadraticCurveTo(transformer.x(points[i].x), transformer.y(points[i].y), transformer.x(points[i+1].x),transformer.y(points[i+1].y));
+
+    ctx.stroke();
+    ctx.restore();
+  };
+
+
+  /**
+   * ２点間の直線を描画する
+   *
+   * @param layerInfo     描画先レイヤー
+   * @param start         lineの始点
+   * @param end           lineの終点
+   * @param color         色
+   * @param size          線幅
+   * @param erase         true: 消しゴム / false: ペン
+   * @param transformer   位置・サイズ補正用オブジェクト（nullなら補正なし）
+   * @private
+   */
+  nCanvas.prototype._drawLine = function (layerInfo, start, end, color, size, erase, transformer) {
+    var compositeOperation = erase ? 'destination-out' : 'source-over';
+    var sx = start.x, sy=start.y, ex=end.x, ey=end.y;
+    if(transformer) {
+      sx = transformer.x(sx);
+      sy = transformer.y(sy);
+      ex = transformer.x(ex);
+      ey = transformer.y(ey);
+    }
+
+    layerInfo.context.save();
+    layerInfo.context.lineJoin = 'round';
+    layerInfo.context.lineCap = 'round';
+    layerInfo.context.strokeStyle = color;
+    layerInfo.context.lineWidth = size;
+    layerInfo.context.globalCompositeOperation = compositeOperation;
+    layerInfo.context.beginPath();
+    layerInfo.context.moveTo(sx, sy);
+    layerInfo.context.lineTo(ex, ey);
+    layerInfo.context.stroke();
+    layerInfo.context.restore();
+
+  };
+
+  /**
+   * undo/redoバッファに履歴を積む
+   * 
+   * @param his   履歴オブジェクト
+   * @private
+     */
+  nCanvas.prototype._addHistory = function(his) {
+    if (this.curHistory < this.undoHistory.length) {
+      // redo 情報が残っていれば削除する
+      this.undoHistory.splice(this.curHistory);
+      if (this.on.canRedo) {
+        this.on.canRedo(false);
+      }
+    }
+
+    this.undoHistory.push(his);
+
+    this.curHistory++;
+    if (this.curHistory == 1) {
+      if (this.on.canUndo) {
+        this.on.canUndo(true);
+      }
+    }
+  };
+
+  /**
+   * 描画オブジェクト（線、画像）を追加する
+   *
+   * @param obj         描画オブジェクト
+   * @returns {number}  追加されたオブジェクトのインデックス
+   * @private
+     */
+  nCanvas.prototype._addObject = function (obj) {
+    this.drawables.push(obj);
+
+    this._addHistory({
+      obj: obj,
+      act: 'add'
+    });
+  };
+
+  /**
+   * オブジェクトを置換して、履歴に積む
+   *
+   * @param orgObj
+   * @param newObj
+   * @private
+   */
+  nCanvas.prototype._replaceObject = function (orgObj, newObj) {
+    orgObj.alive = false;
+    var i = this.drawables.indexOf(orgObj);
+    this.drawables.splice(i, 0, newObj);
+
+    var group = [
+      {act: 'del', obj: orgObj},
+      {act: 'add', obj: newObj}
+    ];
+    this._addHistory({act: 'group', sub: group});
+
+  };
+
+  /**
+   * テキストボックスのサイズを計算する
+   *
+   * @param text    テキスト
+   * @param font    使用フォント
+   * @returns {{width: number, lineMargin: number, lineHeight: *, height: number, lines: Array}}
+   * @private
+   */
+  nCanvas.prototype._measureText = function(text, font) {
+    if(!this.txMeasure) {
+      this.txMeasure = $('<div>Hg</div>');
+      var con = $('<div style="width:0;height:0;overflow:hidden">');
+      con.append(this.txMeasure);
+      this.root.append(con);
+    }
+    this.txMeasure.css('font', font);
+
+    var texts = text.split(/\r|\n|\r\n/);
+    var width = 0;
+    var ctx = this.layers[this._overlay].context;
+    ctx.save();
+    ctx.font = font;
+    texts.forEach(function(t){
+      var m = ctx.measureText(t);
+      if(width<m.width) {
+        width = m.width;
+      }
+    }, this);
+    ctx.restore();
+    var lineMargin = this.txMeasure.height()*0.1;
+    return {
+      width: width,
+      lineMargin: lineMargin,
+      lineHeight: this.txMeasure.height()+lineMargin,
+      height: (this.txMeasure.height()+lineMargin)*texts.length,
+      lines: texts
+    }
+  };
+
+  /**
+   * 指定された位置にテキストボックスがあれば、それを返す。
+   * @param pos   座標
+   * @return 見つかったテキストボックス（描画オブジェクト）、なければnull
+   * @private
+   */
+  nCanvas.prototype._hitTestTextBox = function (pos) {
+    for(var i=this.drawables.length-1 ; i>=0 ; i--) {
+      var e = this.drawables[i];
+      if (e.alive && this._activeLayers[e.layer] && e.type=='text') {
+        if (e.rect.hitTest(pos)) {
+          return e;
+        }
+      }
+    }
+    return null;
+  };
+
+  /**
+   * テキスト編集中か？（＝編集用のTEXTAREAが表示されているか？）
+   *
+   * @returns {boolean}
+   * @private
+   */
+  nCanvas.prototype._isEditingText = function () {
+    return this.elText.css('display')!='none';
+  };
+
+  /**
+   * テキストボックスの編集を開始（テキスト入力欄を表示）
+   *
+   * @param obj   編集対象オブジェクト（新規ならnull）
+   * @param pos   クリック位置
+   * @private
+   */
+  nCanvas.prototype._beginEditText = function (obj, pos) {
+    this.editingText = obj;
+
+    var x,y,w,h, text;
+    if(obj) {
+      var mt = this._measureText(obj.text, obj.font);
+      x = obj.rect.left;
+      y = obj.rect.top;
+      w = Math.min(Math.max(obj.rect.width(), mt.width, TEXTBOX_INIT_WIDTH), TEXTBOX_MAX_WIDTH);
+      h = Math.min(Math.max(obj.rect.height(), mt.height, TEXTBOX_INIT_HEIGHT), TEXTBOX_MAX_HEIGHT);
+      text = obj.text;
+    } else {
+      x = pos.x;
+      y = pos.y - TEXTBOX_INIT_HEIGHT/2;
+      w = TEXTBOX_INIT_WIDTH;
+      h = TEXTBOX_INIT_HEIGHT;
+      text = '';
+    }
+
+    this.elText.val(text);
+    this.elText.css('left', x);
+    this.elText.css('top', y);
+    this.elText.css('width', w);
+    this.elText.css('height', h);
+    this.elText.css('display', 'block');
+    this.elText[0].focus();
+  };
+
+  nCanvas.prototype._updateText = function (obj, text) {
+    if(obj.text != text) {
+      // 文字列が変更された
+      var layer = obj.layer;
+      if(text.length==0) {
+        // 文字列がクリアされた --> テキストボックスを削除
+        obj.alive = false;
+        this._addHistory({act: 'del', obj: obj});
+        obj = null; // 選択状態の復元は不要
+      } else {
+        // テキストが変更された
+        // 更新して、選択状態を復元
+        var old = this._modifyAttr(obj, {text: text});
+        if(old) {
+          this._addHistory({act:'attr', obj:obj, from:old, to:{text:text}});
+        }
+      }
+      // 再描画
+      this._clear(layer);
+      this._redraw(layer  );
+    }
+    if(obj) {
+      this._selection = {objects: [obj]};
+      this.completeSelection();
+    }
+  };
+
+  nCanvas.prototype.addText = function (text, layer, pos) {
+    layer = (null!=layer) ? layer : this.currentLayer;
+    if(text.length>0) {
+      if(this._mode=='select' || this._state=='selected') {
+        this.resetSelection();
+      }
+
+      var font = this.elText.css('font');
+      var mt = this._measureText(text, font);
+      var rect = new Rect(0, 0, mt.width,mt.height);
+      if(!pos) {
+        var canvas = this.layers[layer].canvas;
+        var x = Math.max(0,(canvas.width-mt.width)/2), y = Math.max(0,(canvas.height-mt.height)/2);
+        rect.moveLeftTop(x,y);
+      } else {
+        rect.moveLeftTop(pos.x, pos.y);
+      }
+
+      var obj = {
+        type: 'text',
+        layer: layer,
+        alive: true,
+        text: text,
+        font: font,
+        color: this.color,
+        sel: true,
+        rect: rect
+      };
+
+      this._addObject(obj);
+      this._drawObject(obj);
+      this._selection = {objects: [obj]};
+      this.completeSelection();
+    }
+  };
+    /**
+   * テキスト編集を終了する
+   * @private
+   */
+  nCanvas.prototype._endEditText = function () {
+    var text = this.elText.val();
+    var obj = null;
+    if(this.editingText) {
+      obj = this.editingText;
+      delete this.editingText;
+      this._updateText(obj, text);
+    } else {
+      if(text.length!=0) {
+        // 新しいテキストボックスを作成
+        var el = this.elText[0];
+        this.addText(text, this.currentLayer, new Point(el.offsetLeft, el.offsetTop));
+      }
+    }
+    this.elText.css('display', 'none');
+  };
+    /**
+   * マウス左クリック / 画面タップ時のイベントハンドラ
+   * @param event イベントオブジェクト
+   * @private
+   */
+  nCanvas.prototype._mouseDown = function (event) {
+    event.preventDefault();
+    if (this._sketching) {
+      return;
+    }
+
+    // テキストモード中の処理
+    if(this._mode == 'text') {
+      var pos = this._cursorPosition(event);
+      if(!this._isEditingText()) {
+        // 未編集状態 --> 編集開始
+        if(this._state!='') {
+          // 選択中（ラバーバンド表示中）なら選択解除
+          this.resetSelection();
+        }
+        this._beginEditText(this._hitTestTextBox(pos), pos);
+      } else {
+        // 編集中 --> 編集終了
+        this._endEditText();
+      }
+      return;
+    }
+
+    if (this._mode != 'select' && this._state!='') {
+      // 選択モードで選択中にクリックされた時は選択解除するだけ
+      this.resetSelection();
+      return;
+    }
+
+    // move/up イベントリスナーを登録
+    if (event.type === "touchstart") {
+      this.touch = true;
+      this.eventTarget.addEventListener('touchmove', this._mouseMove);
+      this.eventTarget.addEventListener('touchend', this._mouseUp);
+      this.eventTarget.addEventListener('touchcancel', this._mouseUp);
+      this.eventTarget.addEventListener('touchleave', this._mouseUp);
+
+    } else {
+      this.touch = false;
+      this.eventTarget.addEventListener('mousemove', this._mouseMove);
+      this.eventTarget.addEventListener('mouseout', this._mouseUp);
+      this.eventTarget.addEventListener('mouseup', this._mouseUp);
+    }
+
+    this._lastPosition = this._cursorPosition(event);
+    this._sketching = true;
+    if (this._mode != 'select') {
+      this._currentStroke.color = this.color;
+      this._currentStroke.size = this.penSize;
+      this._currentStroke.erase = this.erase;
+      this._currentStroke.points = [$.extend(true, {}, this._lastPosition)];
+      this._currentStroke.layer = this.currentLayer;
+      this._currentStroke.rect = new Rect(this._lastPosition.x, this._lastPosition.y);
+    } else {
+      this._beginSelect(this._lastPosition, event);
+    }
+  };
+
+  /**
+   * マウス/タッチドラッグ時のイベントハンドラ
+   *
+   * @param event イベントオブジェクト
+   * @private
+   */
+  nCanvas.prototype._mouseMove = function (event) {
+    var currentPosition = this._cursorPosition(event);
+    if(currentPosition.x==this._lastPosition.x && currentPosition.y==this._lastPosition.y) {
+      return;
+    }
+    if (this._mode != 'select') {
+      var layer = (this.erase) ? this._currentStroke.layer : this._overlay;
+      this._currentStroke.rect.addPoint(currentPosition.x, currentPosition.y);
+      this._drawLine(this.layers[layer], this._lastPosition, currentPosition, this.color, this.penSize, this.erase);
+      this._currentStroke.points.push($.extend(true, {}, currentPosition));
+    } else {
+      this._updateSelect(this._lastPosition, currentPosition);
+    }
+    this._lastPosition = currentPosition;
+  };
+
+  /**
+   * マウス左ボタンリリース/タッチ終了イベントのハンドラ
+   *
+   * @private
+   */
+  nCanvas.prototype._mouseUp = function (/*event*/) {
+    if (this._sketching) {
+      this._sketching = false;
+      if (this._mode != 'select') {
+        this._currentStroke.rect.inflate(this.penSize / 2);
+        this._currentStroke.baseRect = this._currentStroke.rect.clone();
+        this._currentStroke.points = this._smoothStroke(this._currentStroke.points);
+        var obj = $.extend(true, {}, this._currentStroke);
+        this._addObject(obj);
+        if(!this.erase) {
+          this._drawObject(obj);
+          this._clear(this._overlay);
+        } else {
+          this._clear(this._currentStroke.layer);
+          this._redraw(this._currentStroke.layer);
+        }
+      } else {
+        this._endSelect();
+      }
+    }
+    if (this.touch) {
+      this.eventTarget.removeEventListener('touchmove', this._mouseMove);
+      this.eventTarget.removeEventListener('touchend', this._mouseUp);
+      this.eventTarget.removeEventListener('touchcancel', this._mouseUp);
+      this.eventTarget.removeEventListener('touchleave', this._mouseUp);
+    } else {
+      this.eventTarget.removeEventListener('mousemove', this._mouseMove);
+      this.eventTarget.removeEventListener('mouseout', this._mouseUp);
+      this.eventTarget.removeEventListener('mouseup', this._mouseUp);
+    }
+  };
+
+  /**
+   * 選択操作を開始・・・mode=='select'で、クリックされたときの処理
+   *
+   * @param p   クリック/タッチ位置
+   * @param event イベント情報
+   * @private
+   */
+  nCanvas.prototype._beginSelect = function (p, event) {
+    // this._clear();
+    // this.redraw();
+    if(this._state == 'selected' && !event.ctrlKey ) {
+      this.resetSelection();
+    }
+
+    if(!this._selection) {
+      this._selection = {objects: [], layers:[]};
+    }
+
+    var selecting = 0; // toggle
+    if (this._state == 'selecting') {
+      selecting = 1;
+    } else if(this._state == 'deselecting') {
+      selecting = -1;
+    }
+    if(event.ctrlKey) {
+      selecting = 0;
+    }
+    
+    var update = false;
+    for(var i=this.drawables.length-1 ; i>=0 ; i--) {
+      var e = this.drawables[i];
+      if(e.alive && this._activeLayers[e.layer]) {
+        var hit = e.rect.hitTest(p);
+        if(hit) {
+          switch(selecting) {
+            case 1: // select
+              if(!e.sel) {
+                e.sel = true;
+                this._selection.objects.push(e);
+                update = true;
+              }
+              break;
+            case -1: // deselect
+              if(e.sel) {
+                e.sel = false;
+                this._selection.objects.splice(this._selection.objects.indexOf(e),1);
+                update = true;
+              }
+              break;
+            case 0: // toggle
+              e.sel = !e.sel;
+              if(e.sel) {
+                this._selection.objects.push(e);
+              } else {
+                this._selection.objects.splice(this._selection.objects.indexOf(e),1);
+              }
+              update = true;
+              break;
+          }
+        }
+
+        if(update) {
+          if(this._state == 'selected') {
+            // ctrl + click
+            this.completeSelection();
+          } else {
+            this._drawSelection();
+          }
+          break;
+        }
+      }
+    }
+  };
+
+  /**
+   * 選択状態を更新・・・mode=='select'で、ドラッグ中の処理
+   *
+   * @param p1    前回のマウス/タッチ位置
+   * @param p2    現在のマウス/タッチ位置
+   * @private
+   */
+  nCanvas.prototype._updateSelect = function (p1, p2) {
+    if(this._state!='') {
+      return;
+    }
+    var update = false;
+    this.drawables.forEach(function (e) {
+      if (!e.sel && e.alive && this._activeLayers[e.layer]) {
+        e.sel = e.rect.intersectTest(p1, p2);
+        if (e.sel) {
+          update = true;
+          this._selection.objects.push(e);
+        }
+      }
+    }, this);
+    if(update) {
+      this._drawSelection();
+    }
+  };
+
+  /**
+   * 選択操作終了・・・選択オブジェクトが１つ以上存在すれば、ラバーバンドによる移動・リサイズ操作へ移行
+   *
+   * @private
+   */
+  nCanvas.prototype._endSelect = function () {
+    if(this._state=='') {
+      this.completeSelection();
+    }
+  };
+
+  /**
+   * ラバーバンドを表示して、移動/リサイズ操作を開始
+   */
+  nCanvas.prototype.completeSelection = function() {
+    if(!this._selection.objects.length) {
+      return;
+    }
+
+    this._state = 'selected';
+
+    // 選択オブジェクトをすべて含む領域を計算
+    var types = {};
+    var r = null;
+    this._selection.layers = {};
+    this._selection.objects.forEach(function(e){
+      if(!r) {
+        r = e.rect.clone();
+      } else {
+        r.unionRect(e.rect);
+      }
+      e.orgRect = e.rect.clone();     // 各オブジェクトの初期位置を退避
+      this._selection.layers[e.layer] = true;
+      types[e.type] = true;
+    }, this);
+
+
+    this._selection.moveFrom = r;
+    if(null==this._selection.lastHistory) {
+      this._selection.lastHistory = this.curHistory;      // undo/redoで、ラバーバンド（選択）を解除・復元する履歴境界を保持しておく
+    }
+
+    this._drawSelection();
+
+    this.rb.setAspect(r.width()/(r.height()||1));
+    this.rb.setRect(r);
+    this.rb.show();
+
+    if(this.on.stateChanged) {
+      this.on.stateChanged(this._state, types);
+    }
+  };
+
+  /**
+   * 選択が完了し移動・リサイズ操作が開始された（ラバーバンドが表示された）状態から、もう一度、選択操作を開始する。
+   * この後は、mouseupイベントでは選択操作から抜けないので、明示的に completeSelection()を呼び出す必要がある。
+   */
+  nCanvas.prototype.restartSelection = function(select) {
+    if(this._state == 'selected') {
+      this.rb.hide();
+      this._state = select ? 'selecting' : 'deselecting';
+      if (this.on.stateChanged) {
+        this.on.stateChanged(this._state);
+      }
+    }
+  };
+
+  /**
+   * ラバーバンドを消して、移動/リサイズ操作を終了
+   */
+  nCanvas.prototype.resetSelection = function() {
+    this._state = '';
+    if(this._selection) {
+      this._selection.objects.forEach(function(e) {
+        delete e.sel;
+        delete e.orgRect;
+      });
+      this._selection = null;
+    }
+    if(this.rb.isShown()) {
+      this.rb.hide();
+    }
+    this._drawSelection();
+
+    if(this.on.stateChanged) {
+      this.on.stateChanged(this._state);
+    }
+  };
+
+  /**
+   * ラバーバンドが移動・リサイズされている（ドラッグイベントで何度も呼ばれる）
+   *
+   * @param rb  ラバーバンド
+   * @private
+   */
+  nCanvas.prototype._onRubberBandMoving = function(rb) {
+    this._transformer.set(this._selection.moveFrom, rb.rect);
+    this._selection.objects.forEach(function(obj){
+      this._moveObject(obj, this._transformer);
+    }, this);
+    this._drawSelection(true);
+  };
+
+  /**
+   * ラバーバンドの移動・リサイズが完了した
+   *
+   * @param rb
+   * @private
+   */
+  nCanvas.prototype._onRubberBandMoved = function(rb) {
+    this._onRubberBandMoving(rb);
+
+    var history = [];
+    this._selection.objects.forEach(function(e){
+      history.push({
+        act: 'move',
+        obj: e,
+        from: e.orgRect.clone(),
+        to: e.rect.clone()
+      });
+      e.orgRect.copyFrom(e.rect);
+    });
+
+    this._addHistory({
+      act: 'group',
+      sub: history
+    });
+
+    this._selection.moveFrom.copyFrom(this.rb.rect);
+  };
+
+  /**
+   * ラバーバンド内部がクリックされたときのハンドラ
+   *
+   * @param rb        イベントが発生したラバーバンドオブジェクト
+   * @param event     イベント情報
+   *
+   * @private
+     */
+  nCanvas.prototype._onRubberBandClicked = function(rb, event) {
+    if(this._mode=='text' && this._selection.objects.length==1 && this._selection.objects[0].type=='text') {
+      // 選択中のテキストボックスがタップされた --> 編集開始
+      var obj = this._selection.objects[0];
+      this.resetSelection();
+      this._beginEditText(obj);
+    } else if( this._mode=='select' && this._state=='selected' && event.ctrlKey) {
+      // 選択中のオブジェクトが Ctrl+クリックされた --> 選択の追加/解除
+      this._beginSelect(this._cursorPosition(event), event);
+    }
+  };
+
+  /**
+   * 近い点を１つにまとめることで点の数を減らして、線をなめらかにする。
+   *
+   * @param points    点列
+   * @returns {*}
+     */
+  nCanvas.prototype._smoothStroke = function(points) {
+    if(points.length<4) {
+      return points;
+    }
+    var r = [points[0]];
+    var p = points[1];
+    var a = {x:p.x, y:p.y};
+    var c = 1;
+    var TH = 3; // + penSize;
+
+    for(var i=2, ci=points.length-1 ; i<ci ; i++) {
+      if(Math.abs(points[i].x-p.x)<TH && Math.abs(points[i].y-p.y)<TH) {
+        a.x = (a.x*c + points[i].x)/(c+1);
+        a.y = (a.y*c + points[i].y)/(c+1);
+        c++;
+      } else {
+        r.push(a);
+        p = points[i];
+        a = {x:p.x, y:p.y};
+        c = 1;
+      }
+    }
+
+    r.push(a);
+    r.push(points[ci]);
+    console.log('count of points was reduced: ' + points.length + ' --> ' + r.length);
+    return r;
+  };
+
+
+  /**
+   * オブジェクトを描画する
+   *
+   * @param obj               描画オブジェクト
+   * @param layers            レイヤーフィルター
+   * @param drawToLayerInfo   描画先レイヤー情報（nullならlayerに描画）
+   * @private
+   */
+  nCanvas.prototype._drawObject = function (obj, layers, drawToLayerInfo) {
+    if (!obj.alive) {
+      return;
+    }
+    if(null!=layers && layers!=obj.layer && !layers[obj.layer]) {
+      return;
+    }
+    this._drawObjectCore(obj, drawToLayerInfo);
+  };
+
+  /**
+   * オブジェクト描画の中の人
+   *
+   * @param obj               描画オブジェクト
+   * @param drawToLayerInfo   描画先レイヤー（nullなら、obj.layerに描画）
+   * @private
+     */
+  nCanvas.prototype._drawObjectCore = function (obj, drawToLayerInfo) {
+    var layerInfo = drawToLayerInfo || this.layers[obj.layer];
+    if (obj.type == 'stroke') {
+      this._drawStrokes(layerInfo, obj);
+    } else if (obj.type == 'image') {
+      // layerInfo.context.fillStyle = "white";
+      layerInfo.context.drawImage(obj.img, obj.rect.left, obj.rect.top, obj.rect.width(), obj.rect.height());
+    } else if( obj.type == 'text') {
+      this._drawText(layerInfo, obj);
+    }
+  };
+
+
+
+  /**
+   * 選択マークを描画する
+   *
+   * @param redrawObjects     true: 選択オブジェクトを含むレイヤー（_selection.layers）を再描画する：移動・リサイズ時の再描画
+   * @private
+     */
+  nCanvas.prototype._drawSelection = function (redrawObjects) {
+    // overlay layerに、オブジェクト境界を描画
+    this._clear(this._overlay);
+    var layerInfo = this.layers[this._overlay];
+    if(this._mode =='select') {
+      // 画像挿入時は、
+      // mode == draw, state==selected
+      this.drawables.forEach(function (e) {
+        this._drawSelectionRect(e, this._activeLayers, layerInfo);
+      }, this);
+    }
+
+    if(redrawObjects) {
+      // オブジェクトを再描画
+      this._clear(this._selection.layers);
+      this._redraw(this._selection.layers);
+    }
+  };
+
+  /**
+   * 矩形を描画
+   *
+   * @param layerInfo   描画先レイヤー情報
+   * @param rect        矩形
+   * @param color       線の色
+   * @param size        線幅
+   * @param compositeOperation    描画モード（デフォルト：source-over）
+   * @private
+   */
+  // nCanvas.prototype._rectangle = function(layerInfo, rect, color, size, compositeOperation) {
+  //   layerInfo.context.save();
+  //   layerInfo.context.lineJoin = 'miter';
+  //   layerInfo.context.lineCap = 'square';
+  //   layerInfo.context.strokeStyle = color;
+  //   layerInfo.context.lineWidth = size;
+  //   layerInfo.context.globalCompositeOperation = compositeOperation || 'source-over';
+  //   layerInfo.context.strokeRect(rect.left, rect.top, rect.width(), rect.height());
+  //   layerInfo.context.restore();
+  // };
+
+  /**
+   * テキストを描画する
+   * 
+   * @param layerInfo   描画先レイヤー情報
+   * @param obj         描画オブジェクト
+   * @private
+     */
+  nCanvas.prototype._drawText = function(layerInfo, obj) {
+    var mt = this._measureText(obj.text, obj.font);
+    var sx = obj.rect.width()/(mt.width||1);
+    var sy = obj.rect.height()/(mt.height||1);
+    var scale = sx<sy ? sx : sy;
+
+    layerInfo.context.save();
+    layerInfo.context.font = obj.font;
+    layerInfo.context.textAlign='start';
+    layerInfo.context.textBaseline = 'top';
+    layerInfo.context.fillStyle = obj.color;
+    layerInfo.context.scale(scale, scale);
+    layerInfo.context.globalCompositeOperation = 'source-over';
+    var top = obj.rect.top/scale;
+    mt.lines.forEach(function(t) {
+      layerInfo.context.fillText(t, obj.rect.left/scale, top /*, obj.rect.width()*/);
+      top += mt.lineHeight;
+    });
+    layerInfo.context.restore();
+  };
+
+  /**
+   * 描画オブジェクトの選択枠を描画
+   *
+   * @param obj               描画オブジェクト
+   * @param layers            レイヤーフィルター
+   * @param drawToLayerInfo   描画先レイヤー情報（nullならlayerに描画）
+   * @private
+   */
+  nCanvas.prototype._drawSelectionRect = function (obj, layers, drawToLayerInfo) {
+    if (!obj.alive || obj.erase ) {
+      return;
+    }
+    if(null!=layers && layers!=obj.layer && !layers[obj.layer]) {
+      return;
+    }
+
+    var layerInfo = drawToLayerInfo || this.layers[obj.layer];
+    layerInfo.context.save();
+    layerInfo.context.lineJoin = 'miter';
+    layerInfo.context.lineCap = 'square';
+    layerInfo.context.globalCompositeOperation = 'source-over';
+
+    var x = obj.rect.ix(), y = obj.rect.iy(), w=obj.rect.iw(), h=obj.rect.ih();
+
+    if(obj.sel) {
+      layerInfo.context.lineWidth = 2;
+      layerInfo.context.setLineDash([5, 5]);
+      layerInfo.context.strokeStyle = '#FFFFFF';
+      layerInfo.context.strokeRect(x-1, y-1, w+2, h+2);
+      layerInfo.context.strokeStyle = '#ef6c00';
+      layerInfo.context.strokeRect(x-1, y-1, w+2, h+2);
+    } else {
+      layerInfo.context.translate(0.5,0.5);
+      layerInfo.context.lineWidth = 1;
+      layerInfo.context.strokeStyle = '#eeeeee';
+      layerInfo.context.strokeRect(x,y,w,h);
+      layerInfo.context.strokeStyle = '#bdbdbd';
+      layerInfo.context.strokeRect(x-1, y-1, w+2, h+2);
+    }
+    layerInfo.context.restore();
+  };
+
+  /**
+   * オブジェクトの描画位置・サイズ変更用トランスフォーマーを更新する
+   * オブジェクトは、描画操作実行時点の点列(points) と、そのときの矩形領域(baseRect)を保持しており、
+   * リサイズ・移動操作が行われると、矩形情報（rect）だけを更新する。
+   * そして、描画時に、baseRectから、rectへの変形情報(Transformerオブジェクト）を使って座標変換を行うが、
+   * 再描画のたびにTransformerを作成しなおすのは不経済なので、moveObjectのタイミングで作成してメンバー保持しておく。
+   *
+   * @param obj           オブジェクト
+   * @private
+     */
+  nCanvas.prototype._updateObjectTransform = function (obj) {
+    if (obj.type == 'stroke') {
+      if(obj.baseRect.equals(obj.rect)) {
+        obj.transformer = null;
+      } else {
+        if(!obj.transformer) {
+          obj.transformer = new Transformer(obj.baseRect, obj.rect, obj.size)
+        } else {
+          obj.transformer.set(obj.baseRect, obj.rect, obj.size);
+        }
+      }
+    }
+  };
+
+  /**
+   * オブジェクトを移動・リサイズする
+   *
+   * @param obj           描画オブジェクト
+   * @param transformer   移動・リサイズ情報
+   * @private
+   */
+  nCanvas.prototype._moveObject = function (obj, transformer) {
+    obj.rect.copyFrom(obj.orgRect);
+    transformer.rect(obj.rect);
+    this._updateObjectTransform(obj);
+  };
+
+  // nCanvas.prototype.toObject = function () {
+  //   return {
+  //     width: this.draw.canvas.width,
+  //     height: this.draw.canvas.height,
+  //     drawables: this.drawables,
+  //     undoHistory: this.undoHistory,
+  //     curHistory: this.curHistory
+  //   };
+  // };
+
+  // nCanvas.prototype.toJSON = function () {
+  //   return JSON.stringify(this.toObject());
+  // };
+
+  // nCanvas.prototype.animate = function (ms, loop, loopDelay) {
+  //   this._clear();
+  //   var delay = ms;
+  //   var callback = null;
+  //   for (var i = 0; i < this.drawables.length; i++) {
+  //     var stroke = this.drawables[i];
+  //     for (var j = 0; j < stroke.lines.length; j++) {
+  //       var line = stroke.lines[j];
+  //       callback = this._drawStroke.bind(this, line.start, line.end, stroke.color, stroke.size, stroke.erase);
+  //       this.animateIds.push(setTimeout(callback, delay));
+  //       delay += ms;
+  //     }
+  //   }
+  //   if (loop) {
+  //     loopDelay = loopDelay || 0;
+  //     callback = this.animate.bind(this, ms, loop, loopDelay);
+  //     this.animateIds.push(setTimeout(callback, delay + loopDelay));
+  //   }
+  // };
+  //
+  // nCanvas.prototype.cancelAnimation = function () {
+  //   for (var i = 0; i < this.animateIds.length; i++) {
+  //     clearTimeout(this.animateIds[i]);
+  //   }
+  // };
+
+  //
+  // Public API
+  //
+
+  /**
+   * 再描画する
+   *
+   * @param layers        レイヤーフィルター
+   * @param drawables     描画オブジェクト
+   */
+  nCanvas.prototype._redraw = function (layers, drawables) {
+    drawables = drawables || this.drawables;
+    for (var i = 0; i < drawables.length; i++) {
+      this._drawObject(drawables[i], layers);
+    }
+  };
+
+
+  /**
+   * キャンバス全体をクリアする
+   * @param layers         レイヤーフィルター（nullならオーバーレイを除く全レイヤー）
+   */
+  nCanvas.prototype._clear = function (layers) {
+    if(null==layers) {
+      this.layers.forEach(function(c, i){
+        if(i!=this._overlay) {
+          c.context.clearRect(0, 0, c.canvas.width, c.canvas.height);
+        }
+      }, this);
+    } else if( typeof layers === 'object') {
+      // クリアするレイヤーをマップで指定
+      this.layers.forEach(function(c, i){
+        if(layers[i]) {
+          c.context.clearRect(0, 0, c.canvas.width, c.canvas.height);
+        }
+      }, this);
+    } else {
+      // 対象レイヤーを直接インデックスで指定
+      var c = this.layers[layers];
+      c.context.clearRect(0, 0, c.canvas.width, c.canvas.height);
+    }
+  };
+  /**
+   * オーバーレイも含めて、すべてのレイヤをクリア
+   * @private
+   */
+  nCanvas.prototype._clearAll = function () {
+    this.layers.forEach(function(c){
+        c.context.clearRect(0, 0, c.canvas.width, c.canvas.height);
+    });
+  };
+
+  /**
+   * ラバーバンド操作時に、アスペクト比を維持するかどうかを指定する
+   * @param flag      keepCurrent / keepSetting / free
+   * @return {bool}   設定後の aspect （freeなら0）
+   */
+  nCanvas.prototype.keepAspect = function(flag) {
+    return this.rb.keepAspect(flag);
+  };
+
+  /**
+   * 描画オブジェクトの属性（color/size/text）を変更する
+   *
+   * @param obj     対象オブジェクト
+   * @param attr    新しい属性
+   * @returns {*}   変更前の属性（変更がなければnull）
+   * @private
+   */
+  nCanvas.prototype._modifyAttr = function (obj, attr) {
+    var old = null;
+    if(attr.color && attr.color!=obj.color && (obj.type=='stroke' || obj.type=='text')) {
+      old = {color: obj.color};
+      obj.color = attr.color;
+    }
+    if(attr.size && attr.size!=obj.size && (obj.type=='stroke')) {
+      old = old || {};
+      old.size = obj.size;
+      obj.size = attr.size;
+
+      obj.baseRect.inflate((obj.size - old.size)/2);
+      obj.rect.inflate((obj.size - old.size)/2);
+    }
+    if(attr.text && attr.text!=obj.text && (obj.type=='text')) {
+      old = old || {};
+      old.text = obj.text;
+      obj.text = attr.text;
+    }
+    return old;
+  };
+  /**
+   * undo処理の中の人
+   *
+   * @param his
+   * @returns {boolean}   true: レイヤーの再描画が必要 / false:対象オブジェクトだけを再描画
+   * @private
+   */
+  nCanvas.prototype._applyUndoCore = function (his) {
+    var obj = his.obj;
+    switch (his.act) {
+      case 'add':
+        obj.alive = false;
+        return true;
+      case 'del':
+        obj.alive = true;
+        return false;
+      case 'move':
+        obj.rect.copyFrom(his.from);
+        this._updateObjectTransform(obj);
+        return true;
+      case 'attr':    // color, penSize, text
+        this._modifyAttr(obj, his.from);
+        return true;
+      default:
+        return false;
+    }
+  };
+
+  /**
+   * redoの中の人
+   *
+   * @param his
+   * @returns {boolean}   true: レイヤーの再描画が必要 / false:対象オブジェクトだけを再描画
+   * @private
+   */
+  nCanvas.prototype._applyRedoCore = function(his) {
+    var obj = his.obj;
+    switch (his.act) {
+      case 'del':
+        obj.alive = false;
+        return true;
+      case 'add':
+        obj.alive = true;
+        return false;
+      case 'move':
+        obj.rect.copyFrom(his.to);
+        this._updateObjectTransform(obj);
+        return true;
+      case 'attr':    // color, penSize, text
+        this._modifyAttr(obj, his.to);
+        return true;
+      default:
+        return false;
+    }
+  };
+
+  /**
+   * グループ化された履歴を反映する
+   * @param groupedHistries   グループ化された履歴オブジェクト
+   * @param fn                履歴適用関数（_applyRedoCore/_applyUndoCore)
+   * @private
+   */
+  nCanvas.prototype._applyGroupedHistory = function(groupedHistries, fn) {
+    var needsRedraw = [];
+    for(var i=groupedHistries.length-1 ; i>=0 ; i--) {
+      var his = groupedHistries[i];
+      if(fn(his)) {
+        if(!needsRedraw[his.obj.layer]) {
+          needsRedraw[his.obj.layer] = true;
+          this._clear(his.obj.layer)
+        }
+      } else {
+        if(!needsRedraw[his.obj.layer]) {
+          this._drawObject(his.obj);
+        }
+      }
+    }
+    this._redraw(needsRedraw);
+  };
+
+  /**
+   * Undo
+   */
+  nCanvas.prototype.undo = function () {
+    if (this.curHistory == 0) {
+      return;
+    }
+    this.curHistory--;
+    var his = this.undoHistory[this.curHistory];
+    if(his.act!='group') {
+      if(this._applyUndoCore(his)) {
+        this._clear(his.obj.layer);
+        this._redraw(his.obj.layer);
+      } else {
+        this._drawObject(his.obj);
+      }
+    } else {
+      this._applyGroupedHistory(his.sub, this._applyUndoCore);
+    }
+
+    if (this.on.canRedo && this.curHistory == this.undoHistory.length - 1) {
+      this.on.canRedo(true);
+    }
+    if (this.on.canUndo && this.curHistory == 0) {
+      this.on.canUndo(false);
+    }
+
+    if(this._mode == 'select') {
+      this._drawSelection();
+    }
+
+    if(this._selection) {
+      if (this._selection.objects && this._selection.objects.length > 0 && this.curHistory >= this._selection.lastHistory) {
+        this.completeSelection();
+      } else {
+        this.resetSelection();
+      }
+    }
+  };
+
+  /**
+   * Redo
+   */
+  nCanvas.prototype.redo = function () {
+    if (this.curHistory >= this.undoHistory.length) {
+      return;
+    }
+    var his = this.undoHistory[this.curHistory];
+    if(his.act!='group') {
+      if(this._applyRedoCore(his)) {
+        this._clear(his.obj.layer);
+        this._redraw(his.obj.layer);
+      } else {
+        this._drawObject(his.obj);
+      }
+    } else {
+      this._applyGroupedHistory(his.sub, this._applyRedoCore);
+    }
+    this.curHistory++;
+
+    if (this.on.canRedo && this.curHistory == this.undoHistory.length) {
+      this.on.canRedo(false);
+    }
+    if (this.on.canUndo && this.curHistory == 1) {
+      this.on.canUndo(true);
+    }
+
+    if(this._mode == 'select') {
+      this._drawSelection();
+    }
+    if(this._selection) {
+        this.completeSelection();
+    }
+  };
+
+  /**
+   * 画像挿入時の初期位置（キャンバスの中央、できるだけ大きく）を取得
+   *
+   * @param img           Imageオブジェクト
+   * @returns {Rect|*}    挿入位置
+     */
+  nCanvas.prototype.getImageInitialPosition = function (img) {
+    var rw = 1, rh = 1, r;
+    var dw = img.width, dh = img.height;
+    var width = this._width, height = this._height;
+    var dx, dy;
+    if (dw > width) {
+      rw = width / dw;
+    }
+    if (dh > height) {
+      rh = height / dh;
+    }
+    r = (rw < rh) ? rw : rh;
+    if (r < 1) {
+      dw = dw * r;
+      dh = dh * r;
+    }
+    dx = (width - dw) / 2;
+    dy = (height - dh) / 2;
+    return new Rect(dx, dy, dx+dw, dy+dh);
+  };
+
+  function loadImage(url) {
+    return new Promise(function(resolve, reject){
+      var img = new Image();
+      img.onload = function() {
+        resolve(img);
+      };
+      img.onerror = function(e) {
+        reject(e);
+      };
+      img.src = url;
+    });
+  }
+
+  nCanvas.prototype.getSelectionAsJson = function() {
+    if(this._selection && this._selection.objects.length>0) {
+      var r = {width: this._width, height: this._height, objects: []};
+      this._selection.objects.forEach(function(e){
+        if(e.alive) {
+          if(e.type=='image') {
+            e = $.extend(true, {}, e);
+            e.url = e.img.src;
+            delete e.img;
+          }
+          r.objects.push(e);
+        }
+      });
+      return JSON.stringify(r);
+    }
+    return null;
+  };
+
+  nCanvas.prototype._addGroupedObjects = function(objects, layer) {
+    if(this._mode=='select' || this._state=='selected') {
+      this.resetSelection();
+    }
+
+    layer = (null!=layer) ? layer : this.currentLayer;
+    var history = [];
+    var selection = [];
+    var promises = [];
+    objects.forEach(function(e){
+      e.layer = layer;
+      if(e.rect) {
+        e.rect = new Rect(e.rect);
+      }
+      if(e.transformer) {
+        e.transformer = new Transformer(e.transformer);
+      }
+      if(e.baseRect) {
+        e.baseRect = new Rect(e.baseRect);
+      }
+      if(e.type=='image' && e.url) {
+        promises.push(loadImage(e.url).then(function(img){
+          e.img = img;
+          delete e.url;
+          return Promise.resolve(e);
+        }));
+      }
+      selection.push(e);
+    });
+
+    var self = this;
+    Promise.all(promises)
+        .then(function(){
+          if(selection.length>0) {
+            selection.forEach(function (e) {
+              history.push({act: 'add', obj: e});
+              self.drawables.push(e);
+              self._drawObject(e);
+            });
+            self._addHistory({act:'group', sub:history});
+            self._selection = {objects: selection};
+            self.completeSelection();
+          }
+        })
+        .catch(function(){
+          console.log('error on pasting objects.');
+        });
+  };
+
+  nCanvas.prototype.paste = function(type, data, layer) {
+    if(type=='text') {
+      this.addText(data, layer);
+    } else if(type=='image') {
+      this.addImage(data, layer);
+    } else if(type=='stroke') {
+      var obj = JSON.parse(data);
+      if(obj.width == this._width && obj.height==this._height) {
+        this._addGroupedObjects(obj.objects, layer);
+      }
+    }
+  };
+
+  /**
+   * 画像（描画オブジェクト）を追加する
+   *
+   * @param url     画像のURL
+   * @param layer   追加先レイヤー
+     */
+  nCanvas.prototype.addImage = function (url, layer) {
+    if(this._mode=='select' || this._state=='selected') {
+      this.resetSelection();
+    }
+
+    layer = (null!=layer) ? layer : this.currentLayer;
+    var self = this;
+    canvas = this.layers[layer].canvas;
+    var img = new Image();
+    img.onload = function () {
+      var obj = {
+        type: 'image',
+        layer: layer,
+        alive: true,
+        img: img,
+        sel: true,
+        rect: self.getImageInitialPosition(img)
+      };
+
+      self._addObject(obj);
+      self._drawObject(obj);
+
+      self._selection = {
+        objects: [obj]
+      };
+      self.completeSelection();
+    };
+    img.src = url;
+  };
+
+  /**
+   * レイヤーの可視状態をまとめて設定
+   *
+   * @param layers          対象レイヤの配列（nullなら全レイヤーが対象）
+   * @param drawLayer       描画対象レイヤー（nullなら現在の設定から変更しない）
+     */
+  nCanvas.prototype.activateLayer = function (layers, drawLayer) {
+    this._activeLayers = [].concat(layers);
+    this.layers.forEach(function(e, i){
+      if(i!=this._overlay) {
+        this.layers[i].element.css('display', layers[i] ? '' : 'none');
+      }
+    },this);
+    
+    if(null!=drawLayer) {
+      this.currentLayer = drawLayer;
+    }
+
+    if(this._mode=='select' || this._state=='selected') {
+      this.resetSelection();
+    }
+  };
+
+
+  /**
+   * 編集モードを設定する。
+   *
+   * @param mode      'draw' ペン描画モード
+   *                  'erase' 消しゴムモード
+   *                  'select' 選択モード
+   */
+  nCanvas.prototype.setMode = function(mode) {
+    if(this._mode != mode) {
+      var orgMode = this._mode;
+      this._mode = mode;
+      this.elText.css('display', 'none');
+      var cursor = 'crosshair';
+
+      switch(mode) {
+        case 'erase':
+          this.erase = true;
+          break;
+        case 'draw':
+          this.erase = false;
+          break;
+        case 'text':
+          cursor = 'text';
+          break;
+        case 'select':
+        default:
+          cursor = 'default';
+          this._drawSelection();
+          // this._clear();
+          // this.redraw();
+      }
+      $(this.eventTarget).css({cursor: cursor});
+
+      if(orgMode == 'select') {
+        this._clearAll();
+        this._redraw();
+      }
+      this.resetSelection();
+
+      if(this.on.modeChanged) {
+        this.on.modeChanged(mode);
+      } 
+    }
+  };
+
+  /**
+   * 選択オブジェクトを削除する
+   */
+  nCanvas.prototype.deleteSelectedObjects = function() {
+    if(this._selection && this._selection.objects.length>0) {
+      var history = [];
+      var redrawMap = {};
+      this._selection.objects.forEach(function(e){
+        e.alive = false;
+        redrawMap[e.layer] = true;
+        history.push({
+          act: 'del',
+          obj: e
+        });
+      });
+      this._addHistory({
+        act: 'group',
+        sub: history
+      });
+      this._clear(redrawMap);
+      this._redraw(redrawMap);
+      this.resetSelection();
+    }
+
+  };
+  
+  /**
+   * 指定されたレイヤーの描画結果を画像(DataUrl)として取り出す。
+   *
+   * @param layers      レイヤー番号|レイヤー番号の配列　（nullなら全レイヤー）
+   * @param fnComplete  生成した画像を返すコールバック関数
+   */
+  nCanvas.prototype.toImage = function(fnComplete, layers) {
+    this.toCanvas(function(canvas){
+      fnComplete(canvas ? canvas.toDataURL() : null);
+    }, layers);
+  };
+
+  /**
+   * 指定されたレイヤーの内容を描画したCanvasを取得する
+   *
+   * @param layers      レイヤー番号|レイヤー番号の配列　（nullなら全レイヤー）
+   * @param fnComplete  生成した画像を返すコールバック関数
+   */
+  nCanvas.prototype.toCanvas = function(fnComplete, layers) {
+    var layerInfo = this.layers[this._overlay];
+    layerInfo.element.css('display', 'none');   // ちらつき防止のため非表示化してから作業
+    layerInfo.context.save();
+    layerInfo.context.fillStyle = "white";
+    layerInfo.context.fillRect(0,0,layerInfo.canvas.width,layerInfo.canvas.height);
+    layerInfo.context.restore();
+
+    this._snapshot(layerInfo, function(canvas){
+      fnComplete(canvas);
+      if(this._mode=='select' || this._state=='selected') {
+        this._drawSelection();
+      } else {
+        this._clear(this._overlay);
+      }
+      layerInfo.element.css('display', 'block');    // 非表示にしたoverlayLayerを表示する。
+    }.bind(this), layers)
+  };
+  /**
+   * @param layerInfo   描画先レイヤー情報
+   * @param layers      レイヤー番号|レイヤー番号の配列　（nullなら現在表示中のレイヤー）
+   * @param fnComplete  生成した画像を保持したCanvas（layerInfoで渡したCanvas）を返す関数（失敗したらnull）
+   */
+  nCanvas.prototype._snapshot = function(layerInfo, fnComplete, layers) {
+    // this.setMode('draw');
+    layers = (null!=layers) ?  layers : this._activeLayers;
+    var layerCount = this._overlay;
+    var count = 0;
+    var error = false;
+    var images = [];
+    var loadImage = function(index, url) {
+      var img = new Image();
+      img.onload = function(){
+        if(error) {
+          return; // １レイヤーでもエラーになったら、後の処理はスキップする
+        }
+        images[index] = img;
+        count++;
+        if(count==layerCount) {
+          // self.setLayersVisibility(null, false);
+
+          images.forEach(function(e){
+            layerInfo.context.drawImage(e, 0, 0, layerInfo.canvas.width, layerInfo.canvas.height);
+          });
+
+          if(fnComplete) {
+            fnComplete(layerInfo.canvas);
+          }
+          console.log('nCanvas -- toImage completed.');
+        }
+      };
+      img.onerror = function() {
+        error = true;
+        console.log('nCanvas -- toImage error.');
+        if(fnComplete) {
+          console.log('error on loading images.');
+          fnComplete(null, 'error on loading images.');
+        }
+      };
+      img.src = url;
+    };
+
+    if(typeof(layers) == 'number') {
+       if(fnComplete) {
+         fnComplete(this.layers[layers].canvas);
+       }
+    } else {
+      var urls = [];
+      for (var i = 0, ci = this._overlay; i < ci; i++) {
+        if (null == layers || layers == i || layers[i]) {
+          urls.push(this.layers[i].canvas.toDataURL());
+        }
+      }
+      layerCount = urls.length;
+      if(layerCount>0) {
+        urls.forEach(function(url, i) {
+          loadImage(i, url);
+        });
+      } else {
+        console.log('no active layers.');
+        fnComplete(null, 'no active layers.');
+      }
+    }
+  };
+
+  /**
+   * 描画結果をオブジェクトとして取り出す。
+   * 取り出した情報は、configとしてコンストラクタに渡すことで、描画内容が復元される。
+   *
+   * @param slim    true: undo履歴をクリアして有効なデータだけを取り出す
+   *                false: undo履歴も併せて取り出す。
+   *
+   * @returns {{layerCount: number, width: (number|*), height: (number|*)}}
+   *
+   */
+  nCanvas.prototype.toObject = function(slim) {
+    var r = {
+      layerCount: this.layers.length-1,
+      width: this._width,
+      height: this._height
+    };
+
+    if(slim) {
+      var d = [];
+      this.drawables.forEach(function(e){
+        if(e.alive) {
+          d.push(e);
+        }
+      });
+      r.drawables = d;
+    } else {
+      r.drawables = this.drawables;
+      r.undoHistory = this.undoHistory;
+      r.curHistory = this.curHistory;
+    }
+    return r;
+  };
+
+  /**
+   * 選択されたストロークのペンサイズを変更する
+   *
+   * @param complete    true: 変更を確定して履歴に積む / false:履歴には積まない
+   */
+  nCanvas.prototype.applyPenSizeToSelection = function(complete) {
+    var history = [], old;
+    var attr = {size: this.penSize};
+    var redraw = false;
+    this._selection.objects.forEach(function(e){
+      if(e.type=='stroke') {
+        old = this._modifyAttr(e, attr);
+        if(old) {
+          redraw = true;
+          if( !e.old ) {
+            e.old = old;
+          }
+        }
+        if(complete) {
+          old = e.old;
+          delete e.old;
+          if(old && old.size != attr.size) {
+            history.push({act: 'attr', obj: e, from: old, to: attr})
+          }
+        }
+      }
+    }, this);
+    if(complete && history.length>0) {
+      this._addHistory({act:'group', sub:history})
+    }
+    if(redraw) {
+      this._clear(this._selection.layers);
+      this._redraw(this._selection.layers);
+    }
+
+  };
+
+  /**
+   * 選択されたストローク・テキストの色を変更する
+   *
+   * @param complete    true: 変更を確定して履歴に積む / false:履歴には積まない
+   */
+  nCanvas.prototype.applyColorToSelection = function(complete) {
+    var history = [], old;
+    var attr = {color: this.color};
+    var redraw = false;
+    this._selection.objects.forEach(function(e){
+      if(e.type=='stroke'||e.type=='text') {
+        old = this._modifyAttr(e, attr);
+        if(old) {
+          redraw = true;
+          if( !e.old ) {
+            e.old = old;
+          }
+        }
+        if(complete) {
+          old = e.old;
+          delete e.old;
+          if(old && old.color != attr.color) {
+            history.push({act: 'attr', obj: e, from: old, to: attr})
+          }
+        }
+      }
+    }, this);
+    if(complete && history.length>0) {
+      this._addHistory({act:'group', sub:history})
+    }
+    if(redraw) {
+      this._clear(this._selection.layers);
+      this._redraw(this._selection.layers);
+    }
+  };
+
+
+  window.mch = window.mch || {};
+  window.mch.nCanvas = nCanvas;
+  
+})(jQuery);/**
+ * drawpad.js
+ * 
+ * DrawPad demo compornent using nCanvas
+ * 
+ * - 2-layered drawing canvas.
+ * - supports multi object types (Pen/Eraser/Text/Picture)
+ * - all objects are selectable and editable, i.e. movable, resizable removable.
+ * - undo/redo unlimitedly
+ * 
+ * Created by toyota on 2016/11/22.
+ * Copyright 2016 M.TOYOTA
+ * All rights reserved.
+ */
+(function() {
+    'use strict';
+
+    var rgbex = /#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i;
+    var toRgb = function(s) {
+        var v = s.match(rgbex);
+        return v.length==4 ? {r:parseInt(v[1],16), g:parseInt(v[2], 16), b:parseInt(v[3],16)} : null;
+    };
+
+    Vue.component('drawpad', {
+        mixins: [mch.vueMdlMixin],           // update_mdl();
+        // el: function () {
+        //     return '.drawpad';
+        // },
+        template: '#drawpad-template',
+        data: function() {
+            return {
+                mode: 'draw',
+                state: '',
+                layer: 'all',
+                canUndo: false,
+                canRedo: false,
+                penSize: 5,
+                color: '#000000',
+                penStyle: {
+                    width: '5px',
+                    height: '5px',
+                    borderRadius: '2.5px',
+                    backgroundColor: '#000000'
+                    //transform: 'scale(0.208,0.208)'
+                },
+                penBoxStyle: {
+                    color: '#000000',
+                    backgroundColor: '#ffffff'
+                },
+                selectTypes: {},
+                canvasSize: {
+                    width: 640,
+                    height: 400
+                }
+
+            }
+        },
+        props: ['ctrid', 'width', 'height'],
+        mounted: function() {
+            this.$nextTick(function(){
+                var self = this;
+                var $el = $(this.$el);
+                this.canvasSize = { 
+                    width: this.width || this.canvasSize.width,
+                    height: this.height || this.canvasSize.height
+                };
+                this.drawpad = new mch.nCanvas({
+                    element: $el.find('.canvas-box'),
+                    layerCount: 2,
+                    initialLayer: 1,
+                    width: this.canvasSize.width,
+                    height: this.canvasSize.height,
+                    manualCompleteSelection: true,
+                    on: {
+                        canRedo: function(f) {
+                            self.canRedo = f;
+                            if(!f) {
+                                self.hideTooltip(this.ctrid + 'btn-redo');
+                            }
+                        },
+                        canUndo: function(f) {
+                            self.canUndo = f;
+                            if(!f) {
+                                self.hideTooltip(this.ctrid + 'btn-undo');
+                            }
+                        },
+                        modeChanged: function(v) {
+                        },
+                        stateChanged: function(v, types) {
+                            self.state = v;
+                            self.selectTypes = types || {};
+                        }
+                    }
+                });
+                //this.drawpad.color=this.color;
+
+                // $(this.$el).find('input[type=color]').on('change', function(){
+                //    //console.log(this);
+                //     self.penStyle.backgroundColor=self.drawpad.color=this.value;
+                // });
+                $(this.$el).mchDropTarget({
+                    dropped: function(files) {
+                        self.setImage(files, self.layer=='fg' ? 1 : 0);
+                    }
+                });
+            });
+        },
+
+        methods: {
+            undo: function() {
+                this.drawpad.undo();
+            },
+            
+            redo: function() {
+                this.drawpad.redo();
+            },
+
+            updatePenSampleColor: function(v) {
+                this.penStyle.backgroundColor = v;
+                this.penBoxStyle.color = v;
+                this.penBoxStyle.backgroundColor = '#ffffff';
+                var rgb = toRgb(v);
+                if(rgb) {
+                    if(rgb.r+rgb.g+rgb.b > 509) {
+                        this.penBoxStyle.backgroundColor = '#505050';
+                    }
+                }
+            },
+
+            setImage: function(files, layer) {
+                var file;
+                if (files.length > 0) {
+                    file = files[0];
+                }
+
+                if (file && file.type.match('image.*')) {
+                    var reader = new FileReader();
+
+                    var self = this;
+                    reader.onload = function () {
+                        self.drawpad.addImage(reader.result, layer);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            },
+            
+            insertImage: function(e) {
+                this.setImage(e.target.files, this.layer=='fg' ? 1 : 0);
+            },
+
+            deleteItems: function() {
+                this.drawpad.deleteSelectedObjects();
+            },
+
+            reselect: function() {
+                if(this.state == 'selecting') {
+                    this.drawpad.completeSelection();
+                } else {
+                    this.drawpad.restartSelection(true);
+                }
+            },
+            deselect: function() {
+                if(this.state == 'deselecting') {
+                    this.drawpad.completeSelection();
+                } else {
+                    this.drawpad.restartSelection(false);
+                }
+            },
+            /**
+             * ボタンがグレーアウト(disabled=true)すると、MDLツールチップが表示されたまま残るので、明示的に非表示化する。
+             *
+             * @param fid       ツールチップのforで指定されたID
+             */
+            hideTooltip: function(fid) {
+                this.$nextTick(function() {
+                    $(this.$el).find('.mdl-tooltip[for=' + fid + ']').removeClass('is-active');
+                });
+            },
+
+            penSizeChanged: function() {
+                if(this.state=='selected' && this.selectTypes.stroke) {
+                    this.drawpad.applyPenSizeToSelection(true);
+                }
+            },
+
+            getImageAndOpenPage: function() {
+                this.toImage(function(dataUrl){
+                    window.open(dataUrl);
+                }, null);
+            },
+
+            toImage: function(completed, layers) {
+                this.drawpad.toImage(completed, layers);
+            },
+            snapshot: function(completed, layers) {
+                this.drawpad.toCanvas(completed, layers);
+            },
+            paste: function(type, data, layer) {
+                this.drawpad.paste(type, data, layer);
+            },
+            
+            copy: function() {
+                return this.drawpad.getSelectionAsJson();
+            },
+            
+            cut: function() {
+                var r = this.copy();
+                if(r) {
+                    this.drawpad.deleteSelectedObjects();
+                }
+                return r;
+            }
+        },
+        
+        watch: {
+            'penSize': function(v) {
+                this.drawpad.penSize = v;
+                if(this.state=='selected' && this.selectTypes.stroke) {
+                    this.drawpad.applyPenSizeToSelection(false);
+                }
+
+                if(v<4) {
+                    v = 4;
+                }
+                this.penStyle.height = this.penStyle.width=v+'px';
+                this.penStyle.borderRadius = v/2+'px';
+            },
+            'color': function(v) {
+                this.drawpad.color = v;
+                if(this.state=='selected' && (this.selectTypes.stroke||this.selectTypes.text)) {
+                    this.drawpad.applyColorToSelection(true);
+                }
+                this.updatePenSampleColor(v);
+            },
+            'mode': function(v) {
+                this.drawpad.setMode((v=='image')?'draw':v);
+                if(v=='erase') {
+                    this.updatePenSampleColor('#ffffff');
+                } else {
+                    this.updatePenSampleColor(this.color);
+                }
+            },
+            'layer' : function(v) {
+                switch(v) {
+                    case 'bg':
+                        this.drawpad.activateLayer([1,0], 0);
+                        break;
+                    case 'fg':
+                        this.drawpad.activateLayer([0,1], 1);
+                        break;
+                    default:
+                        this.drawpad.activateLayer([1,1], 1);
+                        break;
+                }
+            }
+        }
+    });
+
+})();
+  </script>
+  <script type="text/javascript">
+    /**
+ * This class handles LZW encoding
+ * Adapted from Jef Poskanzer's Java port by way of J. M. G. Elliott.
+ * @author Kevin Weiner (original Java version - kweiner@fmsware.com)
+ * @author Thibault Imbert (AS3 version - bytearray.org)
+ * @author Kevin Kwok (JavaScript version - https://github.com/antimatter15/jsgif)
+ * @version 0.1 AS3 implementation
+ */
+
+LZWEncoder = function() {
+
+	var exports = {};
+	var EOF = -1;
+	var imgW;
+	var imgH;
+	var pixAry;
+	var initCodeSize;
+	var remaining;
+	var curPixel;
+
+	// GIFCOMPR.C - GIF Image compression routines
+	// Lempel-Ziv compression based on 'compress'. GIF modifications by
+	// David Rowley (mgardi@watdcsu.waterloo.edu)
+	// General DEFINEs
+
+	var BITS = 12;
+	var HSIZE = 5003; // 80% occupancy
+
+	// GIF Image compression - modified 'compress'
+	// Based on: compress.c - File compression ala IEEE Computer, June 1984.
+	// By Authors: Spencer W. Thomas (decvax!harpo!utah-cs!utah-gr!thomas)
+	// Jim McKie (decvax!mcvax!jim)
+	// Steve Davies (decvax!vax135!petsd!peora!srd)
+	// Ken Turkowski (decvax!decwrl!turtlevax!ken)
+	// James A. Woods (decvax!ihnp4!ames!jaw)
+	// Joe Orost (decvax!vax135!petsd!joe)
+
+	var n_bits; // number of bits/code
+	var maxbits = BITS; // user settable max # bits/code
+	var maxcode; // maximum code, given n_bits
+	var maxmaxcode = 1 << BITS; // should NEVER generate this code
+	var htab = [];
+	var codetab = [];
+	var hsize = HSIZE; // for dynamic table sizing
+	var free_ent = 0; // first unused entry
+
+	// block compression parameters -- after all codes are used up,
+	// and compression rate changes, start over.
+
+	var clear_flg = false;
+
+	// Algorithm: use open addressing double hashing (no chaining) on the
+	// prefix code / next character combination. We do a variant of Knuth's
+	// algorithm D (vol. 3, sec. 6.4) along with G. Knott's relatively-prime
+	// secondary probe. Here, the modular division first probe is gives way
+	// to a faster exclusive-or manipulation. Also do block compression with
+	// an adaptive reset, whereby the code table is cleared when the compression
+	// ratio decreases, but after the table fills. The variable-length output
+	// codes are re-sized at this point, and a special CLEAR code is generated
+	// for the decompressor. Late addition: construct the table according to
+	// file size for noticeable speed improvement on small files. Please direct
+	// questions about this implementation to ames!jaw.
+
+	var g_init_bits;
+	var ClearCode;
+	var EOFCode;
+
+	// output
+	// Output the given code.
+	// Inputs:
+	// code: A n_bits-bit integer. If == -1, then EOF. This assumes
+	// that n_bits =< wordsize - 1.
+	// Outputs:
+	// Outputs code to the file.
+	// Assumptions:
+	// Chars are 8 bits long.
+	// Algorithm:
+	// Maintain a BITS character long buffer (so that 8 codes will
+	// fit in it exactly). Use the VAX insv instruction to insert each
+	// code in turn. When the buffer fills up empty it and start over.
+
+	var cur_accum = 0;
+	var cur_bits = 0;
+	var masks = [0x0000, 0x0001, 0x0003, 0x0007, 0x000F, 0x001F, 0x003F, 0x007F, 0x00FF, 0x01FF, 0x03FF, 0x07FF, 0x0FFF, 0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF];
+
+	// Number of characters so far in this 'packet'
+	var a_count;
+
+	// Define the storage for the packet accumulator
+	var accum = [];
+
+	var LZWEncoder = exports.LZWEncoder = function LZWEncoder(width, height, pixels, color_depth) {
+		imgW = width;
+		imgH = height;
+		pixAry = pixels;
+		initCodeSize = Math.max(2, color_depth);
+	};
+
+	// Add a character to the end of the current packet, and if it is 254
+	// characters, flush the packet to disk.
+	var char_out = function char_out(c, outs) {
+		accum[a_count++] = c;
+		if (a_count >= 254) flush_char(outs);
+	};
+
+	// Clear out the hash table
+	// table clear for block compress
+
+	var cl_block = function cl_block(outs) {
+		cl_hash(hsize);
+		free_ent = ClearCode + 2;
+		clear_flg = true;
+		output(ClearCode, outs);
+	};
+
+	// reset code table
+	var cl_hash = function cl_hash(hsize) {
+		for (var i = 0; i < hsize; ++i) htab[i] = -1;
+	};
+
+	var compress = exports.compress = function compress(init_bits, outs) {
+
+		var fcode;
+		var i; /* = 0 */
+		var c;
+		var ent;
+		var disp;
+		var hsize_reg;
+		var hshift;
+
+		// Set up the globals: g_init_bits - initial number of bits
+		g_init_bits = init_bits;
+
+		// Set up the necessary values
+		clear_flg = false;
+		n_bits = g_init_bits;
+		maxcode = MAXCODE(n_bits);
+
+		ClearCode = 1 << (init_bits - 1);
+		EOFCode = ClearCode + 1;
+		free_ent = ClearCode + 2;
+
+		a_count = 0; // clear packet
+
+		ent = nextPixel();
+
+		hshift = 0;
+		for (fcode = hsize; fcode < 65536; fcode *= 2)
+			++hshift;
+		hshift = 8 - hshift; // set hash code range bound
+
+		hsize_reg = hsize;
+		cl_hash(hsize_reg); // clear hash table
+
+		output(ClearCode, outs);
+
+		outer_loop: while ((c = nextPixel()) != EOF) {
+			fcode = (c << maxbits) + ent;
+			i = (c << hshift) ^ ent; // xor hashing
+
+			if (htab[i] == fcode) {
+				ent = codetab[i];
+				continue;
+			}
+
+			else if (htab[i] >= 0) { // non-empty slot
+
+				disp = hsize_reg - i; // secondary hash (after G. Knott)
+				if (i === 0) disp = 1;
+
+				do {
+					if ((i -= disp) < 0)
+						i += hsize_reg;
+
+					if (htab[i] == fcode) {
+						ent = codetab[i];
+						continue outer_loop;
+					}
+				} while (htab[i] >= 0);
+			}
+
+			output(ent, outs);
+			ent = c;
+			if (free_ent < maxmaxcode) {
+				codetab[i] = free_ent++; // code -> hashtable
+				htab[i] = fcode;
+			}
+			else cl_block(outs);
+		}
+
+		// Put out the final code.
+		output(ent, outs);
+		output(EOFCode, outs);
+	};
+
+	// ----------------------------------------------------------------------------
+	var encode = exports.encode = function encode(os) {
+		os.writeByte(initCodeSize); // write "initial code size" byte
+		remaining = imgW * imgH; // reset navigation variables
+		curPixel = 0;
+		compress(initCodeSize + 1, os); // compress and write the pixel data
+		os.writeByte(0); // write block terminator
+	};
+
+	// Flush the packet to disk, and reset the accumulator
+	var flush_char = function flush_char(outs) {
+		if (a_count > 0) {
+			outs.writeByte(a_count);
+			outs.writeBytes(accum, 0, a_count);
+			a_count = 0;
+		}
+	};
+
+	var MAXCODE = function MAXCODE(n_bits) {
+		return (1 << n_bits) - 1;
+	};
+
+	// ----------------------------------------------------------------------------
+	// Return the next pixel from the image
+	// ----------------------------------------------------------------------------
+
+	var nextPixel = function nextPixel() {
+		if (remaining === 0) return EOF;
+		--remaining;
+		var pix = pixAry[curPixel++];
+		return pix & 0xff;
+	};
+
+	var output = function output(code, outs) {
+
+		cur_accum &= masks[cur_bits];
+
+		if (cur_bits > 0) cur_accum |= (code << cur_bits);
+		else cur_accum = code;
+
+		cur_bits += n_bits;
+
+		while (cur_bits >= 8) {
+			char_out((cur_accum & 0xff), outs);
+			cur_accum >>= 8;
+			cur_bits -= 8;
+		}
+
+		// If the next entry is going to be too big for the code size,
+		// then increase it, if possible.
+
+		if (free_ent > maxcode || clear_flg) {
+
+			if (clear_flg) {
+
+				maxcode = MAXCODE(n_bits = g_init_bits);
+				clear_flg = false;
+
+			} else {
+
+				++n_bits;
+				if (n_bits == maxbits) maxcode = maxmaxcode;
+				else maxcode = MAXCODE(n_bits);
+			}
+		}
+
+		if (code == EOFCode) {
+
+			// At EOF, write the rest of the buffer.
+			while (cur_bits > 0) {
+				char_out((cur_accum & 0xff), outs);
+				cur_accum >>= 8;
+				cur_bits -= 8;
+			}
+
+			flush_char(outs);
+		}
+	};
+
+	LZWEncoder.apply(this, arguments);
+	return exports;
+};
+    /**
+ * This class lets you encode animated GIF files
+ * Base class :  http://www.java2s.com/Code/Java/2D-Graphics-GUI/AnimatedGifEncoder.htm
+ * @author Kevin Weiner (original Java version - kweiner@fmsware.com)
+ * @author Thibault Imbert (AS3 version - bytearray.org)
+ * @author Kevin Kwok (JavaScript version - https://github.com/antimatter15/jsgif)
+ * @version 0.1 AS3 implementation
+ */
+
+GIFEncoder = function() {
+
+	for (var i = 0, chr = {}; i < 256; i++)
+		chr[i] = String.fromCharCode(i);
+
+	function ByteArray() {
+		this.bin = [];
+	}
+
+	ByteArray.prototype.getData = function() {
+		for (var v = '', l = this.bin.length, i = 0; i < l; i++)
+			v += chr[this.bin[i]];
+		return v;
+	};
+
+	ByteArray.prototype.writeByte = function(val) {
+		this.bin.push(val);
+	};
+
+	ByteArray.prototype.writeUTFBytes = function(string) {
+		for (var l = string.length, i = 0; i < l; i++)
+			this.writeByte(string.charCodeAt(i));
+	};
+
+	ByteArray.prototype.writeBytes = function(array, offset, length) {
+		for (var l = length || array.length, i = offset || 0; i < l; i++)
+			this.writeByte(array[i]);
+	};
+
+	var exports = {};
+	var width; // image size
+	var height;
+	var transparent = null; // transparent color if given
+	var transIndex; // transparent index in color table
+	var repeat = -1; // no repeat
+	var delay = 0; // frame delay (hundredths)
+	var started = false; // ready to output frames
+	var out;
+	var image; // current frame
+	var pixels; // BGR byte array from frame
+	var indexedPixels; // converted frame indexed to palette
+	var colorDepth; // number of bit planes
+	var colorTab; // RGB palette
+	var usedEntry = []; // active palette entries
+	var palSize = 7; // color table size (bits-1)
+	var dispose = -1; // disposal code (-1 = use default)
+	var closeStream = false; // close stream when finished
+	var firstFrame = true;
+	var sizeSet = false; // if false, get size from first frame
+	var sample = 10; // default sample interval for quantizer
+	var comment = "Generated by jsgif (https://github.com/antimatter15/jsgif/)"; // default comment for generated gif
+
+	/**
+	 * Sets the delay time between each frame, or changes it for subsequent frames
+	 * (applies to last frame added)
+	 * int delay time in milliseconds
+	 * @param ms
+	 */
+
+	var setDelay = exports.setDelay = function setDelay(ms) {
+		delay = Math.round(ms / 10);
+	};
+
+	/**
+	 * Sets the GIF frame disposal code for the last added frame and any
+	 *
+	 * subsequent frames. Default is 0 if no transparent color has been set,
+	 * otherwise 2.
+	 * @param code
+	 * int disposal code.
+	 */
+
+	var setDispose = exports.setDispose = function setDispose(code) {
+		if (code >= 0) dispose = code;
+	};
+
+	/**
+	 * Sets the number of times the set of GIF frames should be played. Default is
+	 * 1; 0 means play indefinitely. Must be invoked before the first image is
+	 * added.
+	 *
+	 * @param iter
+	 * int number of iterations.
+	 * @return
+	 */
+
+	var setRepeat = exports.setRepeat = function setRepeat(iter) {
+		if (iter >= 0) repeat = iter;
+	};
+
+	/**
+	 * Sets the transparent color for the last added frame and any subsequent
+	 * frames. Since all colors are subject to modification in the quantization
+	 * process, the color in the final palette for each frame closest to the given
+	 * color becomes the transparent color for that frame. May be set to null to
+	 * indicate no transparent color.
+	 * @param
+	 * Color to be treated as transparent on display.
+	 */
+
+	var setTransparent = exports.setTransparent = function setTransparent(c) {
+		transparent = c;
+	};
+
+
+	/**
+	 * Sets the comment for the block comment
+	 * @param
+	 * string to be insterted as comment
+	 */
+
+	var setComment = exports.setComment = function setComment(c) {
+		comment = c;
+	};
+
+
+
+	/**
+	 * The addFrame method takes an incoming BitmapData object to create each frames
+	 * @param
+	 * BitmapData object to be treated as a GIF's frame
+	 */
+
+	// modified by M.TOYOTA for nCanvas on 2016.12.16
+	// var addFrame = exports.addFrame = function addFrame(im, is_imageData) {
+	var addFrame = exports.addFrame = function addFrame(im, localDelay) {
+
+		if ((im === null) || !started || out === null) {
+			throw new Error("Please call start method before calling addFrame");
+		}
+
+		var ok = true;
+
+		try {
+			// modified by M.TOYOTA for nCanvas on 2016.12.16
+			// if (!is_imageData) {
+			if(im.getImageData) {
+				image = im.getImageData(0, 0, im.canvas.width, im.canvas.height).data;
+				if (!sizeSet) setSize(im.canvas.width, im.canvas.height);
+			} else {
+				image = im;
+			}
+			getImagePixels(); // convert to correct format if necessary
+			analyzePixels(); // build color table & map pixels
+
+			if (firstFrame) {
+				writeLSD(); // logical screen descriptior
+				writePalette(); // global color table
+				if (repeat >= 0) {
+					// use NS app extension to indicate reps
+					writeNetscapeExt();
+				}
+			}
+
+			// appended by M.TOYOTA for nCanvas on 2016.12.16
+			var _delayBack = null;
+			if(localDelay!=null) {
+				_delayBack = delay;
+				this.setDelay(localDelay);
+			}
+			// --------------------------------------------
+			
+			writeGraphicCtrlExt(); // write graphic control extension
+
+			// appended by M.TOYOTA for nCanvas on 2016.12.16
+			if(localDelay!=null) {
+				delay = _delayBack;
+			}
+			// --------------------------------------------
+			
+			if (comment !== '') {
+				writeCommentExt(); // write comment extension
+			}
+			writeImageDesc(); // image descriptor
+			if (!firstFrame) writePalette(); // local color table
+			writePixels(); // encode and write pixel data
+			firstFrame = false;
+		} catch (e) {
+			ok = false;
+		}
+
+		return ok;
+	};
+
+	/**
+	 * Adds final trailer to the GIF stream, if you don't call the finish method
+	 * the GIF stream will not be valid.
+	 */
+
+	var finish = exports.finish = function finish() {
+
+		if (!started) return false;
+
+		var ok = true;
+		started = false;
+
+		try {
+			out.writeByte(0x3b); // gif trailer
+		} catch (e) {
+			ok = false;
+		}
+
+		return ok;
+	};
+
+	/**
+	 * Resets some members so that a new stream can be started.
+	 * This method is actually called by the start method
+	 */
+
+	var reset = function reset() {
+
+		// reset for subsequent use
+		transIndex = 0;
+		image = null;
+		pixels = null;
+		indexedPixels = null;
+		colorTab = null;
+		closeStream = false;
+		firstFrame = true;
+	};
+
+	/**
+	 * * Sets frame rate in frames per second. Equivalent to
+	 * <code>setDelay(1000/fps)</code>.
+	 * @param fps
+	 * float frame rate (frames per second)
+	 */
+
+	var setFrameRate = exports.setFrameRate = function setFrameRate(fps) {
+		if (fps != 0xf) delay = Math.round(100 / fps);
+	};
+
+	/**
+	 * Sets quality of color quantization (conversion of images to the maximum 256
+	 * colors allowed by the GIF specification). Lower values (minimum = 1)
+	 * produce better colors, but slow processing significantly. 10 is the
+	 * default, and produces good color mapping at reasonable speeds. Values
+	 * greater than 20 do not yield significant improvements in speed.
+	 * @param quality
+	 * int greater than 0.
+	 * @return
+	 */
+
+	var setQuality = exports.setQuality = function setQuality(quality) {
+		if (quality < 1) quality = 1;
+		sample = quality;
+	};
+
+	/**
+	 * Sets the GIF frame size. The default size is the size of the first frame
+	 * added if this method is not invoked.
+	 * @param w
+	 * int frame width.
+	 * @param h
+	 * int frame width.
+	 */
+
+	var setSize = exports.setSize = function setSize(w, h) {
+
+		if (started && !firstFrame) return;
+		width = w;
+		height = h;
+		if (width < 1) width = 320;
+		if (height < 1) height = 240;
+		sizeSet = true;
+	};
+
+	/**
+	 * Initiates GIF file creation on the given stream.
+	 * @param os
+	 * OutputStream on which GIF images are written.
+	 * @return false if initial write failed.
+	 */
+
+	var start = exports.start = function start() {
+
+		reset();
+		var ok = true;
+		closeStream = false;
+		out = new ByteArray();
+		try {
+			out.writeUTFBytes("GIF89a"); // header
+		} catch (e) {
+			ok = false;
+		}
+
+		return started = ok;
+	};
+
+	var cont = exports.cont = function cont() {
+
+		reset();
+		var ok = true;
+		closeStream = false;
+		out = new ByteArray();
+
+		return started = ok;
+	};
+
+	/**
+	 * Analyzes image colors and creates color map.
+	 */
+
+	var analyzePixels = function analyzePixels() {
+
+		var len = pixels.length;
+		var nPix = len / 3;
+		indexedPixels = [];
+		var nq = new NeuQuant(pixels, len, sample);
+
+		// initialize quantizer
+		colorTab = nq.process(); // create reduced palette
+
+		// map image pixels to new palette
+		var k = 0;
+		for (var j = 0; j < nPix; j++) {
+			var index = nq.map(pixels[k++] & 0xff, pixels[k++] & 0xff, pixels[k++] & 0xff);
+			usedEntry[index] = true;
+			indexedPixels[j] = index;
+		}
+
+		pixels = null;
+		colorDepth = 8;
+		palSize = 7;
+
+		// get closest match to transparent color if specified
+		if (transparent !== null) {
+			transIndex = findClosest(transparent);
+		}
+	};
+
+	/**
+	 * Returns index of palette color closest to c
+	 */
+
+	var findClosest = function findClosest(c) {
+
+		if (colorTab === null) return -1;
+		var r = (c & 0xFF0000) >> 16;
+		var g = (c & 0x00FF00) >> 8;
+		var b = (c & 0x0000FF);
+		var minpos = 0;
+		var dmin = 256 * 256 * 256;
+		var len = colorTab.length;
+
+		for (var i = 0; i < len;) {
+			var dr = r - (colorTab[i++] & 0xff);
+			var dg = g - (colorTab[i++] & 0xff);
+			var db = b - (colorTab[i] & 0xff);
+			var d = dr * dr + dg * dg + db * db;
+			var index = i / 3;
+			if (usedEntry[index] && (d < dmin)) {
+				dmin = d;
+				minpos = index;
+			}
+			i++;
+		}
+		return minpos;
+	};
+
+	/**
+	 * Extracts image pixels into byte array "pixels
+	 */
+
+	var getImagePixels = function getImagePixels() {
+		var w = width;
+		var h = height;
+		pixels = [];
+		var data = image;
+		var count = 0;
+
+		for (var i = 0; i < h; i++) {
+
+			for (var j = 0; j < w; j++) {
+
+				var b = (i * w * 4) + j * 4;
+				pixels[count++] = data[b];
+				pixels[count++] = data[b + 1];
+				pixels[count++] = data[b + 2];
+
+			}
+
+		}
+	};
+
+	/**
+	 * Writes Graphic Control Extension
+	 */
+
+	var writeGraphicCtrlExt = function writeGraphicCtrlExt() {
+		out.writeByte(0x21); // extension introducer
+		out.writeByte(0xf9); // GCE label
+		out.writeByte(4); // data block size
+		var transp;
+		var disp;
+		if (transparent === null) {
+			transp = 0;
+			disp = 0; // dispose = no action
+		} else {
+			transp = 1;
+			disp = 2; // force clear if using transparent color
+		}
+		if (dispose >= 0) {
+			disp = dispose & 7; // user override
+		}
+		disp <<= 2;
+		// packed fields
+		out.writeByte(0 | // 1:3 reserved
+			disp | // 4:6 disposal
+			0 | // 7 user input - 0 = none
+			transp); // 8 transparency flag
+
+		WriteShort(delay); // delay x 1/100 sec
+		out.writeByte(transIndex); // transparent color index
+		out.writeByte(0); // block terminator
+	};
+
+	/**
+	 * Writes Comment Extention
+	 */
+
+	var writeCommentExt = function writeCommentExt() {
+		out.writeByte(0x21); // extension introducer
+		out.writeByte(0xfe); // comment label
+		out.writeByte(comment.length); // Block Size (s)
+		out.writeUTFBytes(comment);
+		out.writeByte(0); // block terminator
+	};
+
+
+	/**
+	 * Writes Image Descriptor
+	 */
+
+	var writeImageDesc = function writeImageDesc() {
+
+		out.writeByte(0x2c); // image separator
+		WriteShort(0); // image position x,y = 0,0
+		WriteShort(0);
+		WriteShort(width); // image size
+		WriteShort(height);
+
+		// packed fields
+		if (firstFrame) {
+			// no LCT - GCT is used for first (or only) frame
+			out.writeByte(0);
+		} else {
+			// specify normal LCT
+			out.writeByte(0x80 | // 1 local color table 1=yes
+				0 | // 2 interlace - 0=no
+				0 | // 3 sorted - 0=no
+				0 | // 4-5 reserved
+				palSize); // 6-8 size of color table
+		}
+	};
+
+	/**
+	 * Writes Logical Screen Descriptor
+	 */
+
+	var writeLSD = function writeLSD() {
+
+		// logical screen size
+		WriteShort(width);
+		WriteShort(height);
+		// packed fields
+		out.writeByte((0x80 | // 1 : global color table flag = 1 (gct used)
+			0x70 | // 2-4 : color resolution = 7
+			0x00 | // 5 : gct sort flag = 0
+			palSize)); // 6-8 : gct size
+
+		out.writeByte(0); // background color index
+		out.writeByte(0); // pixel aspect ratio - assume 1:1
+	};
+
+	/**
+	 * Writes Netscape application extension to define repeat count.
+	 */
+
+	var writeNetscapeExt = function writeNetscapeExt() {
+		out.writeByte(0x21); // extension introducer
+		out.writeByte(0xff); // app extension label
+		out.writeByte(11); // block size
+		out.writeUTFBytes("NETSCAPE" + "2.0"); // app id + auth code
+		out.writeByte(3); // sub-block size
+		out.writeByte(1); // loop sub-block id
+		WriteShort(repeat); // loop count (extra iterations, 0=repeat forever)
+		out.writeByte(0); // block terminator
+	};
+
+	/**
+	 * Writes color table
+	 */
+
+	var writePalette = function writePalette() {
+		out.writeBytes(colorTab);
+		var n = (3 * 256) - colorTab.length;
+		for (var i = 0; i < n; i++) out.writeByte(0);
+	};
+
+	var WriteShort = function WriteShort(pValue) {
+		out.writeByte(pValue & 0xFF);
+		out.writeByte((pValue >> 8) & 0xFF);
+	};
+
+	/**
+	 * Encodes and writes pixel data
+	 */
+
+	var writePixels = function writePixels() {
+		var myencoder = new LZWEncoder(width, height, indexedPixels, colorDepth);
+		myencoder.encode(out);
+	};
+
+	/**
+	 * Retrieves the GIF stream
+	 */
+
+	var stream = exports.stream = function stream() {
+		return out;
+	};
+
+	var setProperties = exports.setProperties = function setProperties(has_start, is_first) {
+		started = has_start;
+		firstFrame = is_first;
+	};
+
+	return exports;
+
+};/*
+ * NeuQuant Neural-Net Quantization Algorithm
+ * ------------------------------------------
+ *
+ * Copyright (c) 1994 Anthony Dekker
+ *
+ * NEUQUANT Neural-Net quantization algorithm by Anthony Dekker, 1994. See
+ * "Kohonen neural networks for optimal colour quantization" in "Network:
+ * Computation in Neural Systems" Vol. 5 (1994) pp 351-367. for a discussion of
+ * the algorithm.
+ *
+ * Any party obtaining a copy of these files from the author, directly or
+ * indirectly, is granted, free of charge, a full and unrestricted irrevocable,
+ * world-wide, paid up, royalty-free, nonexclusive right and license to deal in
+ * this software and documentation files (the "Software"), including without
+ * limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons who
+ * receive copies from any such party to do so, with the only requirement being
+ * that this copyright notice remain intact.
+ */
+
+/*
+ * This class handles Neural-Net quantization algorithm
+ * @author Kevin Weiner (original Java version - kweiner@fmsware.com)
+ * @author Thibault Imbert (AS3 version - bytearray.org)
+ * @author Kevin Kwok (JavaScript version - https://github.com/antimatter15/jsgif)
+ * @version 0.1 AS3 implementation
+ */
+
+NeuQuant = function() {
+
+	var exports = {};
+	var netsize = 256; /* number of colours used */
+
+	/* four primes near 500 - assume no image has a length so large */
+	/* that it is divisible by all four primes */
+
+	var prime1 = 499;
+	var prime2 = 491;
+	var prime3 = 487;
+	var prime4 = 503;
+	var minpicturebytes = (3 * prime4); /* minimum size for input image */
+
+	/*
+	 * Program Skeleton ---------------- [select samplefac in range 1..30] [read
+	 * image from input file] pic = (unsigned char*) malloc(3*width*height);
+	 * initnet(pic,3*width*height,samplefac); learn(); unbiasnet(); [write output
+	 * image header, using writecolourmap(f)] inxbuild(); write output image using
+	 * inxsearch(b,g,r)
+	 */
+
+	/*
+	 * Network Definitions -------------------
+	 */
+
+	var maxnetpos = (netsize - 1);
+	var netbiasshift = 4; /* bias for colour values */
+	var ncycles = 100; /* no. of learning cycles */
+
+	/* defs for freq and bias */
+	var intbiasshift = 16; /* bias for fractions */
+	var intbias = (1 << intbiasshift);
+	var gammashift = 10; /* gamma = 1024 */
+	var gamma = (1 << gammashift);
+	var betashift = 10;
+	var beta = (intbias >> betashift); /* beta = 1/1024 */
+	var betagamma = (intbias << (gammashift - betashift));
+
+	/* defs for decreasing radius factor */
+	var initrad = (netsize >> 3); /* for 256 cols, radius starts */
+	var radiusbiasshift = 6; /* at 32.0 biased by 6 bits */
+	var radiusbias = (1 << radiusbiasshift);
+	var initradius = (initrad * radiusbias); /* and decreases by a */
+	var radiusdec = 30; /* factor of 1/30 each cycle */
+
+	/* defs for decreasing alpha factor */
+	var alphabiasshift = 10; /* alpha starts at 1.0 */
+	var initalpha = (1 << alphabiasshift);
+	var alphadec; /* biased by 10 bits */
+
+	/* radbias and alpharadbias used for radpower calculation */
+	var radbiasshift = 8;
+	var radbias = (1 << radbiasshift);
+	var alpharadbshift = (alphabiasshift + radbiasshift);
+	var alpharadbias = (1 << alpharadbshift);
+
+	/*
+	 * Types and Global Variables --------------------------
+	 */
+
+	var thepicture; /* the input image itself */
+	var lengthcount; /* lengthcount = H*W*3 */
+	var samplefac; /* sampling factor 1..30 */
+
+	// typedef int pixel[4]; /* BGRc */
+	var network; /* the network itself - [netsize][4] */
+	var netindex = [];
+
+	/* for network lookup - really 256 */
+	var bias = [];
+
+	/* bias and freq arrays for learning */
+	var freq = [];
+	var radpower = [];
+
+	var NeuQuant = exports.NeuQuant = function NeuQuant(thepic, len, sample) {
+
+		var i;
+		var p;
+
+		thepicture = thepic;
+		lengthcount = len;
+		samplefac = sample;
+
+		network = new Array(netsize);
+
+		for (i = 0; i < netsize; i++) {
+
+			network[i] = new Array(4);
+			p = network[i];
+			p[0] = p[1] = p[2] = (i << (netbiasshift + 8)) / netsize;
+			freq[i] = intbias / netsize; /* 1/netsize */
+			bias[i] = 0;
+		}
+	};
+
+	var colorMap = function colorMap() {
+
+		var map = [];
+		var index = new Array(netsize);
+
+		for (var i = 0; i < netsize; i++)
+			index[network[i][3]] = i;
+
+		var k = 0;
+		for (var l = 0; l < netsize; l++) {
+			var j = index[l];
+			map[k++] = (network[j][0]);
+			map[k++] = (network[j][1]);
+			map[k++] = (network[j][2]);
+		}
+
+		return map;
+	};
+
+	/*
+	 * Insertion sort of network and building of netindex[0..255] (to do after
+	 * unbias)
+	 * -------------------------------------------------------------------------------
+	 */
+
+	var inxbuild = function inxbuild() {
+
+		var i;
+		var j;
+		var smallpos;
+		var smallval;
+		var p;
+		var q;
+		var previouscol;
+		var startpos;
+
+		previouscol = 0;
+		startpos = 0;
+		for (i = 0; i < netsize; i++) {
+
+			p = network[i];
+			smallpos = i;
+			smallval = p[1]; /* index on g */
+
+			/* find smallest in i..netsize-1 */
+			for (j = i + 1; j < netsize; j++) {
+
+				q = network[j];
+				if (q[1] < smallval) { /* index on g */
+					smallpos = j;
+					smallval = q[1]; /* index on g */
+				}
+			}
+			q = network[smallpos];
+
+			/* swap p (i) and q (smallpos) entries */
+			if (i != smallpos) {
+				j = q[0];
+				q[0] = p[0];
+				p[0] = j;
+				j = q[1];
+				q[1] = p[1];
+				p[1] = j;
+				j = q[2];
+				q[2] = p[2];
+				p[2] = j;
+				j = q[3];
+				q[3] = p[3];
+				p[3] = j;
+			}
+
+			/* smallval entry is now in position i */
+
+			if (smallval != previouscol) {
+
+				netindex[previouscol] = (startpos + i) >> 1;
+
+				for (j = previouscol + 1; j < smallval; j++) netindex[j] = i;
+
+				previouscol = smallval;
+				startpos = i;
+			}
+		}
+
+		netindex[previouscol] = (startpos + maxnetpos) >> 1;
+		for (j = previouscol + 1; j < 256; j++) netindex[j] = maxnetpos; /* really 256 */
+	};
+
+	/*
+	 * Main Learning Loop ------------------
+	 */
+
+	var learn = function learn() {
+
+		var i;
+		var j;
+		var b;
+		var g;
+		var r;
+		var radius;
+		var rad;
+		var alpha;
+		var step;
+		var delta;
+		var samplepixels;
+		var p;
+		var pix;
+		var lim;
+
+		if (lengthcount < minpicturebytes) samplefac = 1;
+
+		alphadec = 30 + ((samplefac - 1) / 3);
+		p = thepicture;
+		pix = 0;
+		lim = lengthcount;
+		samplepixels = lengthcount / (3 * samplefac);
+		delta = (samplepixels / ncycles) | 0;
+		alpha = initalpha;
+		radius = initradius;
+
+		rad = radius >> radiusbiasshift;
+		if (rad <= 1) rad = 0;
+
+		for (i = 0; i < rad; i++) radpower[i] = alpha * (((rad * rad - i * i) * radbias) / (rad * rad));
+
+		if (lengthcount < minpicturebytes) step = 3;
+
+		else if ((lengthcount % prime1) !== 0) step = 3 * prime1;
+
+		else {
+
+			if ((lengthcount % prime2) !== 0) step = 3 * prime2;
+			else {
+				if ((lengthcount % prime3) !== 0) step = 3 * prime3;
+				else step = 3 * prime4;
+			}
+		}
+
+		i = 0;
+		while (i < samplepixels) {
+
+			b = (p[pix + 0] & 0xff) << netbiasshift;
+			g = (p[pix + 1] & 0xff) << netbiasshift;
+			r = (p[pix + 2] & 0xff) << netbiasshift;
+			j = contest(b, g, r);
+
+			altersingle(alpha, j, b, g, r);
+			if (rad !== 0) alterneigh(rad, j, b, g, r); /* alter neighbours */
+
+			pix += step;
+			if (pix >= lim) pix -= lengthcount;
+
+			i++;
+
+			if (delta === 0) delta = 1;
+
+			if (i % delta === 0) {
+				alpha -= alpha / alphadec;
+				radius -= radius / radiusdec;
+				rad = radius >> radiusbiasshift;
+
+				if (rad <= 1) rad = 0;
+
+				for (j = 0; j < rad; j++) radpower[j] = alpha * (((rad * rad - j * j) * radbias) / (rad * rad));
+			}
+		}
+	};
+
+	/*
+	 ** Search for BGR values 0..255 (after net is unbiased) and return colour
+	 * index
+	 * ----------------------------------------------------------------------------
+	 */
+
+	var map = exports.map = function map(b, g, r) {
+
+		var i;
+		var j;
+		var dist;
+		var a;
+		var bestd;
+		var p;
+		var best;
+
+		bestd = 1000; /* biggest possible dist is 256*3 */
+		best = -1;
+		i = netindex[g]; /* index on g */
+		j = i - 1; /* start at netindex[g] and work outwards */
+
+		while ((i < netsize) || (j >= 0)) {
+
+			if (i < netsize) {
+				p = network[i];
+				dist = p[1] - g; /* inx key */
+
+				if (dist >= bestd) i = netsize; /* stop iter */
+
+				else {
+
+					i++;
+					if (dist < 0) dist = -dist;
+					a = p[0] - b;
+					if (a < 0) a = -a;
+					dist += a;
+
+					if (dist < bestd) {
+						a = p[2] - r;
+						if (a < 0) a = -a;
+						dist += a;
+
+						if (dist < bestd) {
+							bestd = dist;
+							best = p[3];
+						}
+					}
+				}
+			}
+
+			if (j >= 0) {
+
+				p = network[j];
+				dist = g - p[1]; /* inx key - reverse dif */
+
+				if (dist >= bestd) j = -1; /* stop iter */
+
+				else {
+
+					j--;
+					if (dist < 0) dist = -dist;
+					a = p[0] - b;
+					if (a < 0) a = -a;
+					dist += a;
+
+					if (dist < bestd) {
+						a = p[2] - r;
+						if (a < 0) a = -a;
+						dist += a;
+						if (dist < bestd) {
+							bestd = dist;
+							best = p[3];
+						}
+					}
+				}
+			}
+		}
+
+		return (best);
+	};
+
+	var process = exports.process = function process() {
+		learn();
+		unbiasnet();
+		inxbuild();
+		return colorMap();
+	};
+
+	/*
+	 * Unbias network to give byte values 0..255 and record position i to prepare
+	 * for sort
+	 * -----------------------------------------------------------------------------------
+	 */
+
+	var unbiasnet = function unbiasnet() {
+
+		var i;
+		var j;
+
+		for (i = 0; i < netsize; i++) {
+			network[i][0] >>= netbiasshift;
+			network[i][1] >>= netbiasshift;
+			network[i][2] >>= netbiasshift;
+			network[i][3] = i; /* record colour no */
+		}
+	};
+
+	/*
+	 * Move adjacent neurons by precomputed alpha*(1-((i-j)^2/[r]^2)) in
+	 * radpower[|i-j|]
+	 * ---------------------------------------------------------------------------------
+	 */
+
+	var alterneigh = function alterneigh(rad, i, b, g, r) {
+
+		var j;
+		var k;
+		var lo;
+		var hi;
+		var a;
+		var m;
+		var p;
+
+		lo = i - rad;
+		if (lo < -1) lo = -1;
+
+		hi = i + rad;
+		if (hi > netsize) hi = netsize;
+
+		j = i + 1;
+		k = i - 1;
+		m = 1;
+
+		while ((j < hi) || (k > lo)) {
+			a = radpower[m++];
+
+			if (j < hi) {
+				p = network[j++];
+
+				try {
+					p[0] -= (a * (p[0] - b)) / alpharadbias;
+					p[1] -= (a * (p[1] - g)) / alpharadbias;
+					p[2] -= (a * (p[2] - r)) / alpharadbias;
+				} catch (e) {} // prevents 1.3 miscompilation
+			}
+
+			if (k > lo) {
+				p = network[k--];
+
+				try {
+					p[0] -= (a * (p[0] - b)) / alpharadbias;
+					p[1] -= (a * (p[1] - g)) / alpharadbias;
+					p[2] -= (a * (p[2] - r)) / alpharadbias;
+				} catch (e) {}
+			}
+		}
+	};
+
+	/*
+	 * Move neuron i towards biased (b,g,r) by factor alpha
+	 * ----------------------------------------------------
+	 */
+
+	var altersingle = function altersingle(alpha, i, b, g, r) {
+
+		/* alter hit neuron */
+		var n = network[i];
+		n[0] -= (alpha * (n[0] - b)) / initalpha;
+		n[1] -= (alpha * (n[1] - g)) / initalpha;
+		n[2] -= (alpha * (n[2] - r)) / initalpha;
+	};
+
+	/*
+	 * Search for biased BGR values ----------------------------
+	 */
+
+	var contest = function contest(b, g, r) {
+
+		/* finds closest neuron (min dist) and updates freq */
+		/* finds best neuron (min dist-bias) and returns position */
+		/* for frequently chosen neurons, freq[i] is high and bias[i] is negative */
+		/* bias[i] = gamma*((1/netsize)-freq[i]) */
+
+		var i;
+		var dist;
+		var a;
+		var biasdist;
+		var betafreq;
+		var bestpos;
+		var bestbiaspos;
+		var bestd;
+		var bestbiasd;
+		var n;
+
+		bestd = ~ (1 << 31);
+		bestbiasd = bestd;
+		bestpos = -1;
+		bestbiaspos = bestpos;
+
+		for (i = 0; i < netsize; i++) {
+			n = network[i];
+			dist = n[0] - b;
+			if (dist < 0) dist = -dist;
+			a = n[1] - g;
+			if (a < 0) a = -a;
+			dist += a;
+			a = n[2] - r;
+			if (a < 0) a = -a;
+			dist += a;
+
+			if (dist < bestd) {
+				bestd = dist;
+				bestpos = i;
+			}
+
+			biasdist = dist - ((bias[i]) >> (intbiasshift - netbiasshift));
+
+			if (biasdist < bestbiasd) {
+				bestbiasd = biasdist;
+				bestbiaspos = i;
+			}
+
+			betafreq = (freq[i] >> betashift);
+			freq[i] -= betafreq;
+			bias[i] += (betafreq << gammashift);
+		}
+
+		freq[bestpos] += beta;
+		bias[bestpos] -= betagamma;
+		return (bestbiaspos);
+	};
+
+	NeuQuant.apply(this, arguments);
+	return exports;
+};
+    /**
+ * droptarget.js
+ * 
+ * Usage:
+ * 
+ * - 初期化
+ *      ターゲット(divなど）でのドロップを受け付け、ファイルがドロップされたら、droppedコールバックを呼び出す。
+ *      var $target =$('div.someDropTarget'); 
+ *      $target.mchDropTarget({
+ *          dropped: function(files, event){},      // required
+ *          dragenter: function(event){},           // optional
+ *          dragleave: function(event){},           // optional
+ *          enabled: true / false                   // optional(default:true) true: 初期状態でドロップ有効 / false:無効
+ *      });
+ *
+ * - isEnabled
+ *      ドロップの受付中か？
+ * - enable     
+ *      ドロップの受付を有効化
+ * - disable
+ *      ドロップの受付を無効化
+ *      
+ * Created by toyota on 2016/10/12.
+ * Copyright 2016-2017 M.TOYOTA
+ * All rights reserved.
+ *
+ */
+
+(function ($) {
+    'use strict';
+
+    var methods = {
+        init: function (options) {
+            if (options) {
+                this.data('dropped', options.dropped);
+                this.data('dragenter', options.dragenter);
+                this.data('dragleave', options.dragleave);
+                if(options.enable!=null) {
+                    this.data('disabled', !options.enable);
+                }
+            }
+
+            var self = this;
+            var holdupEvent = function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                return false;
+            };
+            // this.bind("dragenter", holdupEvent);
+            this.bind("dragover", holdupEvent);
+
+            var droppedHandler = function(event) {
+                holdupEvent(event);
+                var dropped = self.data('dropped');
+                if(dropped) {
+                    dropped(event.originalEvent.dataTransfer.files, event, self);
+                }
+                return false;
+            };
+            var dragEnterHandler = function(event) {
+                holdupEvent(event);
+                var dragenter = self.data('dragenter');
+                if(dragenter) {
+                    dragenter(event);
+                }
+            };
+            var dragLeaveHandler = function(event) {
+                holdupEvent(event);
+                var dragleave = self.data('dragleave');
+                if(dragleave) {
+                    dragleave(event);
+                }
+            };
+            
+            this.data('droppedHandler', droppedHandler);
+            this.data('dragEnterHandler', dragEnterHandler);
+            this.data('dragLeaveHandler', dragLeaveHandler);
+
+            if(!this.data('disabled')) {
+                this.bind("drop", droppedHandler);
+                this.bind("dragenter", dragEnterHandler);
+                this.bind("dragleave", dragLeaveHandler);
+            }
+            return this;
+        },
+
+        isEnabled: function() {
+            return !this.data('disabled');
+        },
+
+        disable: function() {
+            if(!this.data('disabled')) {
+                this.data('disabled', true);
+                this.unbind("drop", this.data('droppedHandler'));
+                this.unbind("dragenter", this.data('dragEnterHandler'));
+                this.unbind("dragleave", this.data('dragLeaveHandler'));
+            }
+            return this;
+        },
+
+        enable: function() {
+            if(this.data('disabled')) {
+                this.data('disabled', false);
+                this.bind("drop", this.data('droppedHandler'));
+                this.bind("dragenter", this.data('dragEnterHandler'));
+                this.bind("dragleave", this.data('dragLeaveHandler'));
+            }
+            return this;
+        },
+
+        dropped: function(callback) {
+            this.data('dropped', callback);
+            return this;
+        },
+        dragenter: function(callback) {
+            this.data('dragenter', callback);
+            return this;
+        },
+        dragleave: function(callback) {
+            this.data('dragleave', callback);
+            return this;
+        }
+    };
+
+    $.fn.mchDropTarget = function(method) {
+        if ( methods[method] ) {
+            return methods[method].apply( this, Array.prototype.slice.call( arguments, 1 ));
+        } else if ( typeof method === 'object' || ! method ) {
+            return methods.init.apply( this, arguments );
+        } else {
+            $.error( 'Method ' +  method + ' does not exist on jQuery.mchDropTarget' );
+        }
+    };
+
+})(jQuery);
+    /**
+ * mmjClipboard.js
+ * 
+ * Created by toyota on 2016/12/15.
+ * Copyright 2016-2017 M.TOYOTA
+ * All rights reserved.
+ */
+
+(function ($) {
+
+    class Clipboard {
+        constructor() {
+            this.clients = {};
+            this._onPasteBinded = this._onPaste.bind(this);
+            this._onCopyBinded = this._onCopy.bind(this);
+            this._onCutBinded = this._onCut.bind(this);
+            this.enabled = false;
+        }
+        register(key, options) {
+            this.clients[key] = options;
+        }
+        unregister(key) {
+            delete this.clients[key];
+        }
+        enable() {
+            document.addEventListener('paste', this._onPasteBinded);
+            document.addEventListener('copy', this._onCopyBinded);
+            document.addEventListener('cut', this._onCutBinded);
+        }
+        disable() {
+            document.removeEventListener('paste', this._onPasteBinded);
+            document.removeEventListener('copy', this._onCopyBinded);
+            document.removeEventListener('cut', this._onCutBinded);
+        }
+
+        getImageData(event, fnGetResult) {
+            var items = event.clipboardData.items;
+            var text = false, html = false;
+            for (var i = 0, ci = items.length; i < ci; i++) {
+                var item = items[i];
+                if (item.kind == 'file' && item.type.startsWith('image/')) {
+                    var imageFile = item.getAsFile();
+                    var fr = new FileReader();
+                    fr.onload = function (e) {
+                        fnGetResult(e.target.result);
+                    };
+                    fr.readAsDataURL(imageFile);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        getTextData(event, type) {
+            type = type || 'text/plain';
+            return event.clipboardData.getData(type);
+        }
+
+        _onPaste(event) {
+            var keys = Object.keys(this.clients);
+            if(keys&&keys.length>0) {
+                for (var i = 0, ci = keys.length; i < ci; i++) {
+                    var client = this.clients[keys[i]];
+                    if(client.paste(event)) {
+                        event.preventDefault();
+                        return;
+                    }
+                }
+            }
+        }
+
+        _copy(event, action) {
+            var keys = Object.keys(this.clients);
+            if(keys&&keys.length>0) {
+                for(var i=0, ci=keys.length ; i<ci ; i++) {
+                    var client = this.clients[keys[i]];
+                    if(client[action]) {
+                        var data = client[action]();
+                        if (data) {
+                            event.clipboardData.setData(data.type, data.value);
+                            event.preventDefault();
+                        }
+                    }
+                }
+            }
+        }
+        _onCopy(event) {
+            console.log('onCopy');
+            this._copy(event, 'copy');
+        }
+
+        _onCut(event) {
+            console.log('onCut');
+            this._copy(event, 'cut');
+        }
+    }
+    
+    window.mch = window.mch || {};
+    window.mch.clipboard = new Clipboard;
+    
+})(jQuery);
+    /**
+ * demo.js
+ *
+ * nCanvas and DrawPad Demo
+ * 
+ * - all feature of DrawPad
+ * - composing Animation-GIF
+ *   ... using Kevin Kwok's library (https://github.com/antimatter15/jsgif)
+ * 
+ * Created by toyota on 2016/11/22.
+ * Copyright 2016-2017 M.TOYOTA
+ * All rights reserved.
+ */
+'use strict';
+
+(function ($) {
+    'use strict';
+
+    function encode64(input) {
+        var output = "", i = 0, l = input.length,
+            key = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+            chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+        while (i < l) {
+            chr1 = input.charCodeAt(i++);
+            chr2 = input.charCodeAt(i++);
+            chr3 = input.charCodeAt(i++);
+            enc1 = chr1 >> 2;
+            enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+            enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+            enc4 = chr3 & 63;
+            if (isNaN(chr2)) enc3 = enc4 = 64;
+            else if (isNaN(chr3)) enc4 = 64;
+            output = output + key.charAt(enc1) + key.charAt(enc2) + key.charAt(enc3) + key.charAt(enc4);
+        }
+        return output;
+    }
+
+    var vueRoot = new Vue({
+        mixins: [window.mch.vueMdlMixin],           // update_mdl();
+        el: '#vueRoot',
+        data: {
+            frames: [],
+            repeat: 0,
+            initialDelay: 500,
+            delay: 500,
+            state: 'first'
+        },
+        mounted: function() {
+            this.$nextTick(function(){
+                var self = this;
+                window.mch.clipboard.enable();
+                window.mch.clipboard.register('drawpad', {
+                    paste: function(event) {
+                        if(window.mch.clipboard.getImageData(event, function(image) {
+                                self.$refs['drawpad'].paste('image', image);
+                            })) {
+                            return true;
+                        }
+                        var text = window.mch.clipboard.getTextData(event, 'text/plain');
+                        if(text) {
+                            self.$refs['drawpad'].paste('text', text);
+                            return true;
+                        }
+                        
+                        text = window.mch.clipboard.getTextData(event, 'text/x-mch-draw');
+                        if(text) {
+                            self.$refs['drawpad'].paste('stroke', text);
+                            return true;
+                        }
+                        return false;
+                    },
+                    
+                    copy: function() {
+                        var d = self.$refs['drawpad'].copy();
+                        return d ? {type:'text/x-mch-draw', value:d} : null;
+                    },
+                    cut: function(complete) {
+                        var d = self.$refs['drawpad'].cut();
+                        return d ? {type:'text/x-mch-draw', value:d} : null;
+                    }
+                });
+            });
+        },
+        beforeDestroy: function() {
+            window.mch.clipboard.unregister('drawpad');
+        },
+        methods: {
+            toggleState: function() {
+                if(!this.encoder) {
+                    // Animation GIF のリピート数がちょっと特殊なので、小細工。
+                    //
+                    // this.repeat
+                    //    visual loop count on view
+                    //        --> internal repeat count of GIFs
+                    //
+                    //      ∞ --> 0 (infinite)
+                    //      1 --> -1 (play once, no repeat)
+                    //      2 --> 1 (play twice == play once and repeat once more)
+                    //      3 --> 2 (play three times == play once and repeat twice)
+                    //      ...
+                    var repeat = 0;                 // repeat infinite
+                    if(this.repeat==1) {
+                        repeat = -1;                // play once
+                    } else if(this.repeat>1) {
+                        repeat = this.repeat-1;     // play <this.repeat> times
+                    }
+
+                    this.encoder = new GIFEncoder();
+                    this.encoder.setSize(this.$refs['drawpad'].canvasSize.width, this.$refs['drawpad'].canvasSize.height);
+                    this.encoder.setRepeat(repeat);
+                    this.encoder.setDelay(this.initialDelay);
+                    this.encoder.start();
+                    this.frames = [];
+                    this.state = 'composing';
+                } else {
+                    this.frames = [];
+                    this.encoder = null;
+                    this.state = 'first';
+                }
+            },
+            addFrame: function() {
+                if(this.encoder) {
+                this.$refs['drawpad'].snapshot(function(canvas){
+                        // this.encoder.addFrame(canvas.getContext('2d'), this.delay);
+                        this.frames.push({
+                            data: canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data,
+                            url: canvas.toDataURL(),
+                            delay: this.delay
+                        });
+                }.bind(this));
+                }
+            },
+            removeFrame: function() {
+                if(this.encoder && this.frames.length>0) {
+                    this.frames.pop();
+                }
+            },
+            complete: function() {
+                if(this.encoder) {
+                    for(var i=0, ci=this.frames.length ; i<ci ; i++) {
+                        this.encoder.addFrame(this.frames[i].data, this.frames[i].delay);
+                    }
+                    this.encoder.finish();
+                    var binary_gif = this.encoder.stream().getData();
+                    var src = 'data:image/gif;base64,'+encode64(binary_gif);
+                    this.frames = [{url:src}];
+                    this.encoder = null;
+                    this.state = 'first';
+                }
+            },
+        },
+        computed: {
+            images: function() {
+                return this.frames.map(function(obj){
+                    return obj.url;
+                });
+            }
+        }
+    });
+
+})(jQuery);
+  </script>
+</html>

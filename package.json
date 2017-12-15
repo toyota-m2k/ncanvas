@@ -9,13 +9,18 @@
   "dependencies": {
     "body-parser": "~1.18.2",
     "cookie-parser": "~1.4.3",
-    "debug": "~2.6.9",
-    "express": "~4.15.5",
+    "debug": "~3.1.0",
+    "express": "~4.16.2",
     "morgan": "~1.9.0",
     "serve-favicon": "~2.4.5"
   },
   "devDependencies": {
-    "cross-env": "^5.1.1"
+    "cross-env": "^5.1.1",
+    "gulp-htmlmin": "^3.0.0",
+    "gulp-minifier": "^0.2.2",
+    "gulp-pug": "^3.3.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^3.1.0"
   },
   "repository": {
     "type": "git",
